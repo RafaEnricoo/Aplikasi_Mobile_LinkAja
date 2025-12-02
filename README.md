@@ -1,29 +1,3 @@
-Baik — README kamu masih default bawaan Flutter + jejak konflik merge (`=======`, `>>>>>>>`) sehingga *tidak layak dipakai untuk project kolaborasi*.
-Karena kamu ingin README berfungsi sebagai **panduan lengkap bagi temanmu untuk clone, install, run, dan kontribusi**, maka kita harus buat README baru yang rapi, profesional, dan lengkap berisi:
-
-### ✔ Cara clone
-
-### ✔ Cara install dependencies
-
-### ✔ Cara run
-
-### ✔ Cara push/pull
-
-### ✔ Struktur folder asset
-
-### ✔ Cara kontribusi (workflow tim)
-
-Aku siapkan versinya yang *siap copy paste* langsung ke GitHub.
-
----
-
-# ✅ **README.md yang Benar & Profesional untuk Project LinkAja**
-
-Silakan **copy–paste** dan ganti README lama kamu.
-
----
-
-````markdown
 # 📱 Aplikasi Mobile LinkAja (Redesign)
 
 Proyek ini adalah aplikasi mobile LinkAja hasil redesign menggunakan **Flutter**.  
@@ -137,30 +111,10 @@ git push origin nama_branch
 ## 👤 Maintainer
 
 * **Muhammad Rafa Enrico**
+GitHub: RafaEnricoo
 * Repository: [https://github.com/RafaEnricoo/Aplikasi_Mobile_LinkAja](https://github.com/RafaEnricoo/Aplikasi_Mobile_LinkAja)
 
 ---
 
 ## 🤝 Kontributor
-
-Tambahkan username GitHub di sini setelah join sebagai collaborator.
-
----
-
-```
-
----
-
-# 🔥 README di atas sudah **siap langsung kamu paste** ke GitHub
-
-Tinggal buka file **README.md** kamu → hapus isinya → paste ini.
-
-Jika kamu mau, aku bisa tambahkan:
-
-✔ badge (build passing, version, flutter badge)  
-✔ screenshot UI di README  
-✔ link Figma  
-✔ daftar tugas tim
-
-Cukup bilang **“Tambahkan versi README yang ada screenshot & badge”**.
-```
+Kang Hamim — GitHub: Hamim688
