@@ -1,20 +1,166 @@
-<<<<<<< HEAD
-# linkaja
+Baik — README kamu masih default bawaan Flutter + jejak konflik merge (`=======`, `>>>>>>>`) sehingga *tidak layak dipakai untuk project kolaborasi*.
+Karena kamu ingin README berfungsi sebagai **panduan lengkap bagi temanmu untuk clone, install, run, dan kontribusi**, maka kita harus buat README baru yang rapi, profesional, dan lengkap berisi:
 
-A new Flutter project.
+### ✔ Cara clone
 
-## Getting Started
+### ✔ Cara install dependencies
 
-This project is a starting point for a Flutter application.
+### ✔ Cara run
 
-A few resources to get you started if this is your first Flutter project:
+### ✔ Cara push/pull
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### ✔ Struktur folder asset
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-=======
-# Aplikasi_Mobile_LinkAja
->>>>>>> bc187c66239eb1050e0e0f49fdc9328342780abd
+### ✔ Cara kontribusi (workflow tim)
+
+Aku siapkan versinya yang *siap copy paste* langsung ke GitHub.
+
+---
+
+# ✅ **README.md yang Benar & Profesional untuk Project LinkAja**
+
+Silakan **copy–paste** dan ganti README lama kamu.
+
+---
+
+````markdown
+# 📱 Aplikasi Mobile LinkAja (Redesign)
+
+Proyek ini adalah aplikasi mobile LinkAja hasil redesign menggunakan **Flutter**.  
+Repository ini digunakan untuk kolaborasi pengembangan frontend antar anggota tim.
+
+---
+
+## 🚀 Cara Menjalankan Project
+
+### 1. Clone Repository
+```sh
+git clone https://github.com/RafaEnricoo/Aplikasi_Mobile_LinkAja.git
+````
+
+### 2. Masuk ke folder project
+
+```sh
+cd Aplikasi_Mobile_LinkAja
+```
+
+### 3. Install dependencies Flutter
+
+```sh
+flutter pub get
+```
+
+### 4. Jalankan aplikasi
+
+```sh
+flutter run
+```
+
+Pastikan emulator Android sudah berjalan atau HP sudah terhubung via USB debugging.
+
+---
+
+## 📂 Struktur Folder Penting
+
+```
+lib/
+ ├── main.dart
+ └── screens/
+      └── dashboard.dart
+
+assets/
+ └── images/
+      └── dashboard/
+           ├── header/
+           ├── balance/
+           ├── quick_menu/
+           ├── payment_list/
+           ├── best_deals/
+           ├── special_for_you/
+           ├── latest_updates/
+           └── navbar/
+```
+
+Pastikan `pubspec.yaml` sudah mengaktifkan asset:
+
+```yaml
+flutter:
+  assets:
+    - assets/images/
+```
+
+---
+
+## 👥 Cara Berkontribusi (Collaboration Workflow)
+
+### 1. Update project sebelum bekerja
+
+```sh
+git pull origin main
+```
+
+### 2. Tambahkan perubahan ke staging
+
+```sh
+git add .
+```
+
+### 3. Commit perubahan
+
+```sh
+git commit -m "Deskripsi perubahan yang jelas"
+```
+
+### 4. Push ke GitHub
+
+```sh
+git push origin main
+```
+
+Jika menggunakan branch khusus:
+
+```sh
+git push origin nama_branch
+```
+
+---
+
+## 🛠 Tools yang Digunakan
+
+* Flutter 3.x
+* Dart
+* VSCode / Android Studio
+* Git & GitHub
+
+---
+
+## 👤 Maintainer
+
+* **Muhammad Rafa Enrico**
+* Repository: [https://github.com/RafaEnricoo/Aplikasi_Mobile_LinkAja](https://github.com/RafaEnricoo/Aplikasi_Mobile_LinkAja)
+
+---
+
+## 🤝 Kontributor
+
+Tambahkan username GitHub di sini setelah join sebagai collaborator.
+
+---
+
+```
+
+---
+
+# 🔥 README di atas sudah **siap langsung kamu paste** ke GitHub
+
+Tinggal buka file **README.md** kamu → hapus isinya → paste ini.
+
+Jika kamu mau, aku bisa tambahkan:
+
+✔ badge (build passing, version, flutter badge)  
+✔ screenshot UI di README  
+✔ link Figma  
+✔ daftar tugas tim
+
+Cukup bilang **“Tambahkan versi README yang ada screenshot & badge”**.
+```
