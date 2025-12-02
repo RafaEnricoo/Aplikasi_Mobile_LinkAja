@@ -20,4 +20,4 @@ class MyApp extends StatelessWidget {
       home: const DashboardPage(), // arahkan ke dashboard
     );
   }
-}
+} // RAFA SUKA OKSA
