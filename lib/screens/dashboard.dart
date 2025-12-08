@@ -1,55 +1,71 @@
 import 'package:flutter/material.dart';
 
-// --- IMPORT KOMPONEN YANG UDAH LU PISAH ---
-// Pastikan path/lokasi foldernya sesuai ya
-import '../widgets/header.dart';
-import '../widgets/menu_quick.dart';
-import '../widgets/payment_list.dart';
+// --- IMPORT WIDGETS ---
+import '../widgets/header.dart';        // Pastikan nama file sesuai
+import '../widgets/menu_quick.dart';    // Pastikan nama file sesuai
+import '../widgets/payment_list.dart';  // Pastikan nama file sesuai
+import '../widgets/menu_navbar.dart';   // <--- IMPORT NAVBAR YANG BARU
 
-class DashboardScreen extends StatelessWidget {
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  // 1. STATE VARIABLE
+  // Ini untuk melacak menu mana yang sedang aktif (0: Home, 1: History, dst)
+  int _currentIndex = 0; 
+
+  // Fungsi untuk mengubah halaman saat menu diklik
+  void _onNavBarTap(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100], // Warna background dasar (abu muda)
+      backgroundColor: Colors.grey[100], 
+      
+      // 2. BODY UTAMA
       body: Stack(
         children: [
-          // 1. BACKGROUND IMAGE (Header Merah)
-          // Tetap di sini karena dia jadi background utamanya
+          // A. BACKGROUND HEADER MERAH (Layer Terbawah)
           Container(
             height: 240,
             width: double.infinity,
             decoration: const BoxDecoration(
+              // Jika background image belum ada, ganti warna solid dulu biar gak error
+              // color: Color(0xFFE52326), 
               image: DecorationImage(
-                image: AssetImage(
-                  'assets/images/dashboard/header/background.jpg',
-                ),
+                image: AssetImage('assets/images/dashboard/header/background.jpg'),
                 fit: BoxFit.cover,
               ),
             ),
           ),
 
-          // 2. KONTEN UTAMA
+          // B. KONTEN SCROLLABLE (Layer Atas)
           SafeArea(
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   const SizedBox(height: 10),
 
-                  // A. HEADER (Profile & Saldo)
-                  // ✅ Panggil Class dari file dashboard_header.dart
+                  // 1. HEADER (Profile & Saldo)
+                  // Pastikan class DashboardHeader menerima parameter jika butuh data dinamis
                   const DashboardHeader(),
 
                   const SizedBox(height: 20),
 
-                  // B. QUICK MENU (Box Melayang)
-                  // ✅ Panggil Class dari file quick_menu.dart
+                  // 2. QUICK MENU (Box Melayang)
                   const QuickMenu(),
 
                   const SizedBox(height: 20),
 
-                  // C. CONTAINER PUTIH BAWAH (Payment List & Promo)
+                  // 3. CONTAINER PUTIH BAWAH (Rounded Top)
                   Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
@@ -63,18 +79,16 @@ class DashboardScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // ✅ Panggil Class dari file payment_list.dart
+                        // Payment List Grid
                         const PaymentList(),
 
                         const SizedBox(height: 20),
 
-                        // D. PROMO BANNER (Masih Inline/Lokal)
-                        // Karena lu belum pisahin ini, kodenya tetep ditaruh di bawah (private method)
+                        // Promo Banner (Masih Inline, nanti dipisah ya!)
                         _buildSpecialForYou(),
 
-                        const SizedBox(
-                          height: 80,
-                        ), // Spacer biar gak ketutup navbar
+                        // Spacer extra agar konten terbawah tidak tertutup Navbar
+                        const SizedBox(height: 80), 
                       ],
                     ),
                   ),
@@ -85,23 +99,33 @@ class DashboardScreen extends StatelessWidget {
         ],
       ),
 
-      // --- TOMBOL QR ---
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xFFED1C24),
-        elevation: 4,
-        child: const Icon(Icons.qr_code_scanner, size: 30),
+      // 3. FLOATING ACTION BUTTON (Tombol QR Merah)
+      floatingActionButton: SizedBox(
+        width: 65,
+        height: 65,
+        child: FloatingActionButton(
+          onPressed: () {
+            print("Scan QR Clicked");
+          },
+          backgroundColor: const Color(0xFFE52326), // Merah LinkAja
+          elevation: 4,
+          shape: const CircleBorder(), // Wajib bulat agar pas di lekukan
+          child: const Icon(Icons.qr_code_scanner, size: 32, color: Colors.white),
+        ),
       ),
+      // Lokasi tombol: Menancap di tengah navbar
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      // --- BOTTOM NAVBAR ---
-      bottomNavigationBar: _buildBottomNavBar(),
+      // 4. BOTTOM NAVIGATION BAR (Modular Widget)
+      bottomNavigationBar: MenuNavbar(
+        selectedIndex: _currentIndex, // Lempar state ke widget
+        onTap: _onNavBarTap,          // Lempar fungsi update state ke widget
+      ),
     );
   }
 
-  // --- SISA WIDGET YANG BELUM DIPISAH (Promo & Navbar) ---
-
-  // Widget Promo Banner
+  // --- SISA WIDGET LOKAL (PROMO) ---
+  // Idealnya dipindah ke lib/widgets/promo_slider.dart nanti
   Widget _buildSpecialForYou() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -117,7 +141,9 @@ class DashboardScreen extends StatelessWidget {
             height: 160,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
+              color: Colors.blue[100], // Placeholder color
               image: const DecorationImage(
+                // Ganti dengan aset lokal jika sudah ada
                 image: NetworkImage("https://via.placeholder.com/600x300"),
                 fit: BoxFit.cover,
               ),
@@ -132,45 +158,6 @@ class DashboardScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-
-  // Widget Bottom Navbar
-  Widget _buildBottomNavBar() {
-    return BottomAppBar(
-      shape: const CircularNotchedRectangle(),
-      notchMargin: 8.0,
-      color: Colors.white,
-      child: SizedBox(
-        height: 60,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _navItem(Icons.home, "Home", true),
-            _navItem(Icons.history, "History", false),
-            const SizedBox(width: 40),
-            _navItem(Icons.mail_outline, "Inbox", false),
-            _navItem(Icons.person_outline, "Account", false),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _navItem(IconData icon, String label, bool isActive) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(icon, color: isActive ? Colors.red : Colors.grey[400]),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 10,
-            color: isActive ? Colors.red : Colors.grey[400],
-          ),
-        ),
-      ],
     );
   }
 }
