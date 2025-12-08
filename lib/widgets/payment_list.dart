@@ -6,14 +6,47 @@ class PaymentList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Map<String, dynamic>> menuList = [
-      {'icon': Icons.wifi, 'label': 'Credit/Data', 'color': Colors.red},
-      {'icon': Icons.flash_on, 'label': 'Electricity', 'color': Colors.blue},
-      {'icon': Icons.credit_card, 'label': 'E-Money', 'color': Colors.teal},
-      {'icon': Icons.tv, 'label': 'Cable TV', 'color': Colors.orange},
-      {'icon': Icons.wallet, 'label': 'E-Wallet', 'color': Colors.lightBlue},
-      {'icon': Icons.mosque, 'label': 'Infaq', 'color': Colors.green},
-      {'icon': Icons.gamepad, 'label': 'Games', 'color': Colors.amber},
-      {'icon': Icons.more_horiz, 'label': 'More', 'color': Colors.grey},
+      {
+        'image':
+            'assets/images/dashboard/payment_list/data.png', // Ganti path sesuai file lu
+        'label': 'Credit/Data',
+        'color': Colors.red,
+      },
+      {
+        'image': 'assets/images/dashboard/payment_list/icon_pln.png',
+        'label': 'Electricity',
+        'color': Colors.blue,
+      },
+      {
+        'image': 'assets/images/dashboard/payment_list/icon_emoney.png',
+        'label': 'E-Money',
+        'color': Colors.teal,
+      },
+      {
+        'image': 'assets/images/dashboard/payment_list/icon_tv.png',
+        'label': 'Cable TV',
+        'color': Colors.orange,
+      },
+      {
+        'image': 'assets/images/dashboard/payment_list/icon_wallet.png',
+        'label': 'E-Wallet',
+        'color': Colors.lightBlue,
+      },
+      {
+        'image': 'assets/images/dashboard/payment_list/icon_infaq.png',
+        'label': 'Infaq',
+        'color': Colors.green,
+      },
+      {
+        'image': 'assets/images/dashboard/payment_list/mgames.png',
+        'label': 'Games',
+        'color': Colors.amber,
+      },
+      {
+        'image': 'assets/images/dashboard/payment_list/more.png',
+        'label': 'More',
+        'color': Colors.white,
+      },
     ];
 
     return Padding(
@@ -45,10 +78,11 @@ class PaymentList extends StatelessWidget {
                       color: menuList[index]['color'].withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      menuList[index]['icon'],
-                      color: menuList[index]['color'],
-                      size: 28,
+                    child: Image.asset(
+                      menuList[index]['image'],
+                      width: 28,
+                      height: 28,
+                      // color: menuList[index]['color'],
                     ),
                   ),
                   const SizedBox(height: 8),

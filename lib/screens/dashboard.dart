@@ -12,77 +12,87 @@ class DashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100], // Warna background dasar (abu muda)
-      body: Stack(
-        children: [
-          // 1. BACKGROUND IMAGE (Header Merah)
-          // Tetap di sini karena dia jadi background utamanya
-          Container(
-            height: 240,
-            width: double.infinity,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  'assets/images/dashboard/header/background.jpg',
+      backgroundColor: Colors.grey[100],
+
+      // 1. SingleChildScrollView DI LUAR
+      // Ini kuncinya biar background merah ikut kegulung pas discroll
+      body: SingleChildScrollView(
+        child: Stack(
+          children: [
+            // --- LAYER 1: BACKGROUND IMAGE (Header Merah) ---
+            // Posisinya paling belakang
+            Container(
+              height: 275,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(
+                    'assets/images/dashboard/header/background.jpg',
+                  ),
+                  fit: BoxFit.cover,
                 ),
-                fit: BoxFit.cover,
               ),
             ),
-          ),
 
-          // 2. KONTEN UTAMA
-          SafeArea(
-            child: SingleChildScrollView(
+            // --- LAYER 2: KONTEN UTAMA ---
+            SafeArea(
               child: Column(
                 children: [
                   const SizedBox(height: 10),
 
-                  // A. HEADER (Profile & Saldo)
-                  // ✅ Panggil Class dari file dashboard_header.dart
+                  // A. HEADER (Profile, Saldo, dll)
                   const DashboardHeader(),
 
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
 
-                  // B. QUICK MENU (Box Melayang)
-                  // ✅ Panggil Class dari file quick_menu.dart
-                  const QuickMenu(),
+                  // B. MENU & ISI BAWAH (Pakai Stack lagi buat efek Floating)
+                  Stack(
+                    clipBehavior: Clip.none, // Biar shadow/offset gak kepotong
+                    children: [
+                      // -- BOX PUTIH (Payment List) --
+                      Container(
+                        width: double.infinity,
+                        // Turunin dikit (40px) biar Quick Menu di atasnya bisa "ngangkang"
+                        margin: const EdgeInsets.only(top: 40),
+                        // Padding top gede (60px) biar isi list gak ketutup Quick Menu
+                        padding: const EdgeInsets.only(top: 80, bottom: 20),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Panggil Component PaymentList
+                            const PaymentList(),
 
-                  const SizedBox(height: 20),
+                            const SizedBox(height: 20),
 
-                  // C. CONTAINER PUTIH BAWAH (Payment List & Promo)
-                  Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30),
+                            // Panggil Promo Banner
+                            _buildSpecialForYou(),
+
+                            const SizedBox(height: 80), // Spacer bawah
+                          ],
+                        ),
                       ),
-                    ),
-                    padding: const EdgeInsets.only(top: 30, bottom: 20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // ✅ Panggil Class dari file payment_list.dart
-                        const PaymentList(),
 
-                        const SizedBox(height: 20),
-
-                        // D. PROMO BANNER (Masih Inline/Lokal)
-                        // Karena lu belum pisahin ini, kodenya tetep ditaruh di bawah (private method)
-                        _buildSpecialForYou(),
-
-                        const SizedBox(
-                          height: 80,
-                        ), // Spacer biar gak ketutup navbar
-                      ],
-                    ),
+                      // -- QUICK MENU (Melayang di Atas) --
+                      const Positioned(
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        child: QuickMenu(),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
 
       // --- TOMBOL QR ---
@@ -99,9 +109,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // --- SISA WIDGET YANG BELUM DIPISAH (Promo & Navbar) ---
-
-  // Widget Promo Banner
+  // --- WIDGET PROMO BANNER (Manual di sini) ---
   Widget _buildSpecialForYou() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -135,7 +143,7 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  // Widget Bottom Navbar
+  // --- WIDGET NAVBAR (Manual di sini) ---
   Widget _buildBottomNavBar() {
     return BottomAppBar(
       shape: const CircularNotchedRectangle(),
