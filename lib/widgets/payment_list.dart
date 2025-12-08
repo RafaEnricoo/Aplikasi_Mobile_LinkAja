@@ -68,7 +68,7 @@ class PaymentList extends StatelessWidget {
               crossAxisCount: 4,
               mainAxisSpacing: 25,
               crossAxisSpacing: 10,
-              childAspectRatio: 0.7,
+              childAspectRatio: 1,
             ),
             itemBuilder: (context, index) {
               Color baseColor = menuList[index]['color'];
