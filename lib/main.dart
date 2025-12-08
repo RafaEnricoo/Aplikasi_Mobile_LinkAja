@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.red,
         fontFamily: "Poppins", // nanti bisa diganti sesuai desainmu
       ),
-      home: const DashboardPage(), // arahkan ke dashboard
+      home: const DashboardScreen(), // arahkan ke dashboard
     );
   }
 } // RAFA SUKA OKSA
