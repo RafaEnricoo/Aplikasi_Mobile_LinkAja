@@ -61,6 +61,7 @@ flutter:
   assets:
     - assets/images/dashboard/header/
     - assets/images/dashboard/payment_list/
+    - assets/images/dashboard/quick_menu/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

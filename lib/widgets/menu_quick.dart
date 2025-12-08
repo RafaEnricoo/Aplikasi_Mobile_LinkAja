@@ -6,7 +6,7 @@ class QuickMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 45),
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -23,23 +23,24 @@ class QuickMenu extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _menuItem(Icons.add_card_outlined, "Top Up"),
-          _menuItem(Icons.send_to_mobile_outlined, "Transfer"),
-          _menuItem(Icons.outbond_outlined, "Cash Out"),
-          _menuItem(Icons.grid_view, "See All"),
+          _menuItem('assets/images/dashboard/quick_menu/topup.png', "Top up"),
+          _menuItem('assets/images/dashboard/quick_menu/kirim.png', "Transfer"),
+          _menuItem('assets/images/dashboard/quick_menu/cashout.png', "Cash Out"),
+          _menuItem('assets/images/dashboard/quick_menu/seeall.png', "See All"),
         ],
       ),
     );
   }
 
-  Widget _menuItem(IconData icon, String label) {
+  Widget _menuItem(String assetPath, String label) {
     return Column(
       children: [
-        Icon(icon, color: const Color(0xFFED1C24), size: 32),
-        const SizedBox(height: 8),
+        // Pakai Image.asset karena datanya sekarang Path Gambar
+        Image.asset(assetPath, width: 35, height: 35),
+        const SizedBox(height: 6),
         Text(
           label,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
         ),
       ],
     );
