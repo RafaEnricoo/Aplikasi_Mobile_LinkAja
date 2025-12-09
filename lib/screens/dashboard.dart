@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import '../widgets/header.dart';        // Pastikan nama file sesuai
 import '../widgets/menu_quick.dart';    // Pastikan nama file sesuai
 import '../widgets/payment_list.dart';  // Pastikan nama file sesuai
-import '../widgets/menu_navbar.dart';   // <--- IMPORT NAVBAR YANG BARU
+import '../widgets/menu_navbar.dart';
+import '../widgets/promo_slider.dart';
+import '../widgets/best_deals.dart';
+import '../widgets/latest_update.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -61,36 +64,62 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                   const SizedBox(height: 10),
 
-                  // B. MENU & ISI BAWAH (Pakai Stack lagi buat efek Floating)
+                  // B. MENU & ISI BAWAH (Stack untuk efek Floating)
                   Stack(
-                    clipBehavior: Clip.none, // Biar shadow/offset gak kepotong
+                    clipBehavior: Clip.none,
                     children: [
-                      // -- BOX PUTIH (Payment List) --
+                      // -- BOX PUTIH (Container Utama) --
                       Container(
                         width: double.infinity,
-                        // Turunin dikit (40px) biar Quick Menu di atasnya bisa "ngangkang"
                         margin: const EdgeInsets.only(top: 40),
-                        // Padding top gede (60px) biar isi list gak ketutup Quick Menu
                         padding: const EdgeInsets.only(top: 80, bottom: 20),
                         decoration: const BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(70),
-                            topRight: Radius.circular(70),
+                            topLeft: Radius.circular(40), // Saya sarankan 40 biar gak terlalu lonjong
+                            topRight: Radius.circular(40),
                           ),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Panggil Component PaymentList
+                            // 1. PAYMENT LIST
                             const PaymentList(),
 
                             const SizedBox(height: 20),
 
-                            // Panggil Promo Banner
-                            _buildSpecialForYou(),
+                            // 2. PROMO SLIDER (Special Just For You)
+                            const PromoSlider(),
 
-                            const SizedBox(height: 80), // Spacer bawah
+                            const SizedBox(height: 20), // Jarak sebelum garis
+
+                            // --- PEMBATAS 1 (Sebelum Best Deals) ---
+                            Container(
+                              height: 12, // Ketebalan pembatas
+                              width: double.infinity,
+                              color: Colors.grey[100], // Warna putih keabu-abuan
+                            ),
+                            
+                            const SizedBox(height: 10), // Jarak setelah garis
+
+                            // 3. BEST DEALS
+                            const BestDeals(),
+                            
+                            const SizedBox(height: 10), // Jarak sebelum garis
+
+                            // --- PEMBATAS 2 (Setelah Best Deals) ---
+                            Container(
+                              height: 12,
+                              width: double.infinity,
+                              color: Colors.grey[100], 
+                            ),
+
+                            const SizedBox(height: 10), // Jarak setelah garis
+
+                            // 4. LATEST UPDATES
+                            const LatestUpdates(),
+
+                            const SizedBox(height: 60), // Spacer bawah agar tidak ketutup navbar
                           ],
                         ),
                       ),
@@ -112,17 +141,48 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
 
       // 3. FLOATING ACTION BUTTON (Tombol QR Merah)
+      // 3. FLOATING ACTION BUTTON (Tombol QR Merah)
+      // --- TOMBOL QR DENGAN GRADASI PUTIH DI ATAS ---
       floatingActionButton: SizedBox(
         width: 65,
         height: 65,
-        child: FloatingActionButton(
-          onPressed: () {
-            print("Scan QR Clicked");
-          },
-          backgroundColor: const Color(0xFFE52326), // Merah LinkAja
-          elevation: 4,
-          shape: const CircleBorder(), // Wajib bulat agar pas di lekukan
-          child: const Icon(Icons.qr_code_scanner, size: 32, color: Colors.white),
+        // Kita ganti FloatingActionButton biasa dengan Material custom
+        child: Material(
+          shape: const CircleBorder(),
+          elevation: 4, // Tetap ada bayangannya
+          clipBehavior: Clip.antiAlias, // Agar gradasi tidak bocor keluar lingkaran
+          child: Container(
+            decoration: const BoxDecoration(
+              // INI KUNCINYA: Linear Gradient
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  // Warna 1: Merah agak Putih/Terang di bagian paling atas
+                  Color(0xFFFF5555), 
+                  // Warna 2: Merah LinkAja (Dominan)
+                  Color(0xFFE52326), 
+                ],
+                // Stops mengatur seberapa banyak putihnya. 
+                // 0.0 - 0.3 artinya bagian putihnya cuma di 30% atas
+                stops: [0.0, 0.4], 
+              ),
+            ),
+            child: InkWell(
+              // InkWell biar tetap ada efek 'percikan air' pas diklik
+              onTap: () {
+                print("Scan QR Clicked");
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(17.0),
+                child: Image.asset(
+                  'assets/images/dashboard/navbar/qr.png',
+                  color: Colors.white,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
       // Lokasi tombol: Menancap di tengah navbar
