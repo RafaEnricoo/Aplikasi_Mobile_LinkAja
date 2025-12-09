@@ -10,7 +10,7 @@ class QuickMenu extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.1),
@@ -36,7 +36,7 @@ class QuickMenu extends StatelessWidget {
     return Column(
       children: [
         // Pakai Image.asset karena datanya sekarang Path Gambar
-        Image.asset(assetPath, width: 35, height: 35),
+        Image.asset(assetPath, width: 32, height: 32),
         const SizedBox(height: 6),
         Text(
           label,

@@ -65,16 +65,14 @@ class DashboardHeader extends StatelessWidget {
 
           // --- BARIS 2: SALDO & POIN (Pakai Stack biar presisi) ---
           SizedBox(
-            width: double.infinity, // Pastiin lebarnya full biar Stack jalan
-            height: 30, // Kasih tinggi dikit biar muat chip-nya
+            width: double.infinity,
+            height: 30,
             child: Stack(
-              alignment: Alignment
-                  .center, // Kuncinya disini: Teks Balance tetep di TENGAH
+              alignment: Alignment.center,
               children: [
                 // 1. Label "Total Balance" + Icon Mata (Di Tengah)
                 Row(
-                  mainAxisSize:
-                      MainAxisSize.min, // Biar lebarnya ngikutin konten aja
+                  mainAxisSize: MainAxisSize.min,
                   children: [
                     const Text(
                       "Total Balance",
@@ -87,10 +85,8 @@ class DashboardHeader extends StatelessWidget {
                     const SizedBox(width: 8),
                     // Icon Mata (Hide Balance)
                     Icon(
-                      Icons.visibility_off_outlined, // Icon mata dicoret
-                      color: Colors.white.withOpacity(
-                        0.8,
-                      ), // Agak transparan dikit
+                      Icons.visibility_off_outlined,
+                      color: Colors.white.withOpacity(0.8),
                       size: 18,
                     ),
                   ],
@@ -98,7 +94,7 @@ class DashboardHeader extends StatelessWidget {
 
                 // 2. Chip Poin (Di Kanan Mentok)
                 Positioned(
-                  right: 0, // Tempel ke kanan
+                  right: 0,
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 8,
@@ -138,15 +134,38 @@ class DashboardHeader extends StatelessWidget {
 
           const SizedBox(height: 5),
 
-          // --- BARIS 3: NOMINAL SALDO ---
-          const Text(
-            "Rp 999.999.999",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.0,
-            ),
+          // --- BARIS 3: NOMINAL SALDO (YANG DIPERBAIKI) ---
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center, // Posisi di tengah
+            crossAxisAlignment: CrossAxisAlignment.start, // "Rp" nempel di atas
+            children: [
+              // 1. Bagian "Rp" (Kecil)
+              Padding(
+                padding: const EdgeInsets.only(
+                  top: 4.0,
+                ), // Geser dikit ke bawah
+                child: const Text(
+                  "Rp",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14, // Font kecil
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 4), // Jarak spasi
+              // 2. Bagian Angka (Besar)
+              const Text(
+                "999.999.999",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 32, // Font besar
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.0,
+                  height: 1.0, // Ratin line height
+                ),
+              ),
+            ],
           ),
         ],
       ),

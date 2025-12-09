@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 // --- IMPORT WIDGETS ---
-import '../widgets/header.dart';        // Pastikan nama file sesuai
-import '../widgets/menu_quick.dart';    // Pastikan nama file sesuai
-import '../widgets/payment_list.dart';  // Pastikan nama file sesuai
+import '../widgets/header.dart';    
+import '../widgets/menu_quick.dart';    
+import '../widgets/payment_list.dart';  
 import '../widgets/menu_navbar.dart';
 import '../widgets/promo_slider.dart';
 import '../widgets/best_deals.dart';
@@ -41,7 +41,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             // --- LAYER 1: BACKGROUND IMAGE (Header Merah) ---
             // Posisinya paling belakang
             Container(
-              height: 280,
+              height: 290,
               width: double.infinity,
               decoration: const BoxDecoration(
                 image: DecorationImage(
