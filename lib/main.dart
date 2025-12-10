@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/dashboard.dart';
+import 'screens/landing_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.red,
         fontFamily: "Poppins", // nanti bisa diganti sesuai desainmu
       ),
-      home: const DashboardScreen(), // arahkan ke dashboard
+      home: const LandingPage(),
     );
   }
 }
