@@ -11,34 +11,40 @@ class PromoSlider extends StatefulWidget {
 class _PromoSliderState extends State<PromoSlider> {
   late PageController _pageController;
   
-  // Konfigurasi Skala
-  final double _scaleFactor = 0.85; 
+  // --- KONFIGURASI BARU ---
+  // viewportFraction 0.85 artinya gambar tengah makan 85% lebar layar.
+  // Sisanya (15%) dibagi ke kiri dan kanan untuk "peeking".
+  final double _viewportFraction = 0.85; 
+  
+  // Skala gambar samping. 0.8 artinya gambar samping ukurannya 80% dari gambar tengah.
+  final double _sideScale = 0.8; 
+  
   final double _height = 170.0;
 
-  // Variabel Auto Play
+  // ... (Variabel Timer & List gambar TETAP SAMA) ...
   int _currentPageIndex = 0;
   Timer? _timer;
 
   final List<String> promoImages = [
-    'assets/images/dashboard/special_just_for_you/special1.PNG',
-    'assets/images/dashboard/special_just_for_you/special2.PNG',
-    'assets/images/dashboard/special_just_for_you/special3.PNG',
-    'assets/images/dashboard/special_just_for_you/special4.PNG',
-    'assets/images/dashboard/special_just_for_you/special5.PNG',
+    'assets/images/dashboard/special_just_for_you/special1.png',
+    'assets/images/dashboard/special_just_for_you/special2.png',
+    'assets/images/dashboard/special_just_for_you/special3.png',
+    'assets/images/dashboard/special_just_for_you/special4.png',
+    'assets/images/dashboard/special_just_for_you/special5.png',
   ];
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController(viewportFraction: 0.85);
+    // Gunakan variabel _viewportFraction yang baru
+    _pageController = PageController(viewportFraction: _viewportFraction);
     
-    // TIDAK PERLU addListener setState LAGI DISINI (Bikin Lag)
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startAutoPlay();
     });
   }
 
+  // ... (Fungsi _startAutoPlay dan dispose TETAP SAMA, tidak diubah) ...
   void _startAutoPlay() {
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (_currentPageIndex < promoImages.length - 1) {
@@ -86,79 +92,86 @@ class _PromoSliderState extends State<PromoSlider> {
           onPanCancel: () => _startAutoPlay(),
           onPanEnd: (_) => _startAutoPlay(),
           child: SizedBox(
-            height: 200, 
+            height: 150, 
             child: PageView.builder(
               clipBehavior: Clip.none, 
               controller: _pageController,
               itemCount: promoImages.length,
               onPageChanged: (index) {
-                // setState hanya untuk update titik indikator (ringan)
                 setState(() {
                   _currentPageIndex = index;
                 });
               },
               itemBuilder: (context, index) {
-                // --- PERUBAHAN UTAMA DISINI ---
-                // Gunakan AnimatedBuilder untuk animasi super halus
                 return AnimatedBuilder(
                   animation: _pageController,
                   builder: (context, child) {
                     double pagePosition = 0.0;
                     
-                    // Ambil posisi pixel akurat saat ini
                     if (_pageController.position.haveDimensions) {
                       pagePosition = _pageController.page!;
                     } else {
-                      // Fallback saat pertama kali render
                       pagePosition = _currentPageIndex.toDouble();
                     }
 
-                    // Rumus Matematika Simple & Simetris:
-                    // Hitung jarak index gambar ini dari posisi scroll saat ini
-                    // Hasilnya: 0.0 (Tepat di tengah), 1.0 (Sebelahnya), dst.
+                    // Menghitung selisih posisi
                     double difference = (index - pagePosition).abs();
                     
-                    // Batasi kalkulasi hanya untuk gambar yang terlihat (jarak < 1)
-                    double scale = _scaleFactor;
+                    // --- LOGIKA SKALA YANG DIPERBAIKI ---
+                    double scale;
+                    
+                    // Jika selisih < 1 (sedang transisi atau aktif)
                     if (difference < 1.0) {
-                      // Interpolasi dari 0.85 ke 1.0 berdasarkan kedekatan ke tengah
-                      scale = 1 - (1 - _scaleFactor) * difference;
+                      // Rumus Interpolasi Linear:
+                      // Saat difference 0 (tengah) -> scale = 1.0
+                      // Saat difference 1 (samping) -> scale = _sideScale (0.8)
+                      scale = 1 - (1 - _sideScale) * difference;
+                    } else {
+                      // Jika jauh dari tengah, paksa tetap kecil
+                      scale = _sideScale;
                     }
 
-                    // Hitung Matrix Transformasi
+                    // Matrix Transformasi
                     Matrix4 matrix = Matrix4.identity();
-                    double verticalTranslation = _height * (1 - scale) / 2;
+                    
+                    // Terjemahan Vertikal (Biar gambar kecil tetap 'Center Vertical')
+                    // Rumus: tinggi * (1 - scale) / 2
+                    double verticalTranslation = 150 * (1 - scale) / 2;
+                    
                     matrix = Matrix4.diagonal3Values(1, scale, 1)
                       ..setTranslationRaw(0, verticalTranslation, 0);
 
                     return Transform(
                       transform: matrix,
                       alignment: Alignment.center,
-                      child: child, // Child adalah Container gambar di bawah
+                      child: child,
                     );
                   },
-                  // Child statis (Gambar) yang tidak perlu direbuild terus-menerus
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 12), // Jarak antar gambar
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.15),
-                          blurRadius: 10,
-                          offset: const Offset(0, 5),
+                  // Child tetap sama
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12), // Padding dikecilkan dikit
+                    child: Align(
+                      alignment: Alignment.center, 
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white, 
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.15),
+                              blurRadius: 10,
+                              offset: const Offset(0, 5),
+                            ),
+                          ],
                         ),
-                      ],
-                      image: DecorationImage(
-                        image: AssetImage(promoImages[index]),
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Image.asset(
-                        promoImages[index],
-                        fit: BoxFit.cover,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: Image.asset(
+                            promoImages[index],
+                            fit: BoxFit.fill, // Ganti ke FILL atau COVER biar penuh
+                            width: double.infinity, // Paksa lebar penuh container
+                          ),
+                        ),
                       ),
                     ),
                   ),
@@ -167,10 +180,10 @@ class _PromoSliderState extends State<PromoSlider> {
             ),
           ),
         ),
-
+        
         const SizedBox(height: 20),
 
-        // Indikator Dots
+        // Indikator Dots (TETAP SAMA)
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: promoImages.asMap().entries.map((entry) {

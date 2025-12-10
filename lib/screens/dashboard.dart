@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 // --- IMPORT WIDGETS (Sesuaikan path lu) ---
-import '../widgets/header.dart';
-import '../widgets/menu_quick.dart';
-import '../widgets/payment_list.dart';
+import '../widgets/dashboard/header.dart';
+import '../widgets/dashboard/menu_quick.dart';
+import '../widgets/dashboard/payment_list.dart';
 import '../widgets/menu_navbar.dart';
-import '../widgets/promo_slider.dart';
-import '../widgets/best_deals.dart';
-import '../widgets/latest_update.dart';
+import '../widgets/dashboard/promo_slider.dart';
+import '../widgets/dashboard/best_deals.dart';
+import '../widgets/dashboard/latest_update.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
