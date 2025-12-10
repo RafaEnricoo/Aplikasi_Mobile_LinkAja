@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async'; // 1. IMPORT INI WAJIB (untuk Timer)
+import 'dart:async'; 
 import 'login.dart'; 
 
 class LandingPage extends StatefulWidget {
@@ -12,13 +12,11 @@ class LandingPage extends StatefulWidget {
 class _LandingPageState extends State<LandingPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
-  
   bool _isHovering = false;
-
-  // 2. VARIABEL TIMER
   Timer? _timer; 
 
-  final Color brandRed = Colors.red;
+  // Warna Merah Vivid (Lebih Terang)
+  final Color brandRed = const Color(0xFFFF1F1F); 
   final Color greyText = const Color(0xFF7A7A7A);
 
   final List<Map<String, String>> _slides = [
@@ -39,33 +37,30 @@ class _LandingPageState extends State<LandingPage> {
     },
   ];
 
-  // 3. INIT STATE: Jalankan Timer saat halaman dibuka
   @override
   void initState() {
     super.initState();
     _startAutoScroll();
   }
 
-  // 4. FUNGSI LOGIKA AUTO SCROLL
   void _startAutoScroll() {
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
       if (_currentPage < _slides.length - 1) {
         _currentPage++;
       } else {
-        _currentPage = 0; // Balik ke halaman pertama jika sudah mentok
+        _currentPage = 0; 
       }
 
       if (_pageController.hasClients) {
         _pageController.animateToPage(
           _currentPage,
-          duration: const Duration(milliseconds: 350), // Kecepatan geser
-          curve: Curves.easeIn, // Efek animasi
+          duration: const Duration(milliseconds: 350), 
+          curve: Curves.easeIn, 
         );
       }
     });
   }
 
-  // 5. DISPOSE: Matikan Timer saat keluar halaman (PENTING biar gak memori leak)
   @override
   void dispose() {
     _timer?.cancel();
@@ -82,7 +77,7 @@ class _LandingPageState extends State<LandingPage> {
           children: [
             const SizedBox(height: 20),
             
-            // LOGO
+            // 1. LOGO
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Image.asset(
@@ -96,7 +91,7 @@ class _LandingPageState extends State<LandingPage> {
               ),
             ),
 
-            // SLIDER
+            // 2. SLIDER GAMBAR
             Expanded(
               child: PageView.builder(
                 controller: _pageController,
@@ -116,87 +111,78 @@ class _LandingPageState extends State<LandingPage> {
               ),
             ),
 
-            // BOTTOM SECTION
+            // --- JARAK ANTARA SLIDER DAN INDIKATOR ---
+            const SizedBox(height: 40), 
+
+            // 3. INDIKATOR (STATIC POSITION)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: List.generate(
+                _slides.length,
+                (index) => _buildIndicatorDot(index),
+              ),
+            ),
+
+            // 4. JARAK PEMISAH (GAP BESAR KE TOMBOL)
+            // Anda bisa sesuaikan 100-180 tergantung panjang layar HP target
+            const SizedBox(height: 180), 
+
+            // 5. TOMBOL "Get Started"
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 30.0),
-              child: Column(
-                children: [
-                  // INDIKATOR
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(
-                      _slides.length,
-                      (index) => _buildIndicatorDot(index),
+              padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 40.0),
+              child: MouseRegion(
+                onEnter: (_) => setState(() => _isHovering = true),
+                onExit: (_) => setState(() => _isHovering = false),
+                
+                child: GestureDetector(
+                  onTap: () {
+                    _timer?.cancel(); 
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    );
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    width: double.infinity,
+                    height: 55,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: _isHovering 
+                          ? [const Color(0xFFFF6B6B), const Color(0xFFFF3333)] 
+                          : [const Color(0xFFFF4545), const Color(0xFFE52326)], 
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFFD32F2F).withOpacity(0.4),
+                          offset: const Offset(0, 4),
+                          blurRadius: 8,
+                        ),
+                      ],
                     ),
-                  ),
-
-                  const SizedBox(height: 40),
-
-                  // B. TOMBOL "Get Started" (REVISI: LEBIH TERANG & TEXT FIX)
-                  MouseRegion(
-                    onEnter: (_) => setState(() => _isHovering = true),
-                    onExit: (_) => setState(() => _isHovering = false),
-                    
-                    child: GestureDetector(
-                      onTap: () {
-                        _timer?.cancel(); 
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => const LoginScreen()),
-                        );
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 200),
-                        width: double.infinity,
-                        height: 55,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          
-                          // 1. REVISI WARNA: MERAH LEBIH TERANG (VIVID)
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: _isHovering 
-                              // Saat Hover: Merah agak Orange dikit biar nyala
-                              ? [const Color(0xFFFF6B6B), const Color(0xFFFF3333)] 
-                              // Normal: Merah Terang (Vivid) ke Merah LinkAja Standard
-                              : [const Color(0xFFFF4545), const Color(0xFFE52326)], 
-                          ),
-
-                          boxShadow: [
-                            BoxShadow(
-                              color: const Color.fromARGB(255, 102, 20, 20).withOpacity(0.4), // Shadow merah gelap (bukan hitam pekat)
-                              offset: const Offset(0, 4),
-                              blurRadius: 8,
-                            ),
-                          ],
-
-                          border: Border(
-                            top: BorderSide(color: Colors.white.withOpacity(0.5), width: 1.5),
-                            right: BorderSide(color: Colors.white.withOpacity(0.3), width: 1.0),
-                            left: BorderSide.none,
-                            bottom: BorderSide(color: Colors.black.withOpacity(0.05), width: 1.0),
-                          ),
+                    foregroundDecoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border(
+                        top: BorderSide(color: Colors.white.withOpacity(0.5), width: 1.5),
+                        right: BorderSide(color: Colors.white.withOpacity(0.3), width: 1.0),
+                      ),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "Get Started",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white, 
+                          letterSpacing: 0.5,
                         ),
-                        
-                        // --- BAGIAN INI PENTING AGAR TEKS MUNCUL ---
-                        // Pastikan 'child' ini ada DI DALAM AnimatedContainer, bukan di luarnya
-                        child: const Center(
-                          child: Text(
-                            "Get Started",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white, // Warna teks putih
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                        // -------------------------------------------
                       ),
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           ],
@@ -204,6 +190,8 @@ class _LandingPageState extends State<LandingPage> {
       ),
     );
   }
+
+  // --- HELPER WIDGETS ---
 
   Widget _buildSlideItem({
     required String image,
@@ -213,38 +201,58 @@ class _LandingPageState extends State<LandingPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          ConstrainedBox(
-            constraints: const BoxConstraints(maxHeight: 300),
+          // SPACER ATAS (Mendorong konten ke bawah agar sejajar dasar)
+          const Spacer(),
+
+          // FIXED HEIGHT GAMBAR (Agar base-nya rata)
+          SizedBox(
+            height: 280, 
+            width: double.infinity,
             child: Image.asset(
               image,
               fit: BoxFit.contain,
+              alignment: Alignment.bottomCenter, 
               errorBuilder: (ctx, err, stack) => Container(
-                height: 250, width: 250, color: Colors.grey[200],
+                color: Colors.grey[200],
                 child: const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
               ),
             ),
           ),
+          
           const SizedBox(height: 40),
-          Text(
-            title,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-              height: 1.2,
-            ),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            subtitle,
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14,
-              color: greyText,
-              height: 1.5,
+          
+          // FIXED HEIGHT TEKS (Agar judul mulai di titik yg sama)
+          SizedBox(
+            height: 110, 
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start, 
+              children: [
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                    height: 1.2,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: greyText,
+                    height: 1.5,
+                  ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
             ),
           ),
         ],
