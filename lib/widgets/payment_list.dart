@@ -66,9 +66,9 @@ class PaymentList extends StatelessWidget {
             itemCount: menuList.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              mainAxisSpacing: 25,
+              mainAxisSpacing: 5,
               crossAxisSpacing: 10,
-              childAspectRatio: 0.7,
+              childAspectRatio: 1.0,
             ),
             itemBuilder: (context, index) {
               Color baseColor = menuList[index]['color'];

@@ -13,7 +13,7 @@ class DashboardHeader extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              // Foto Profil (Kiri)
+              // Foto Profil
               Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
@@ -26,8 +26,7 @@ class DashboardHeader extends StatelessWidget {
                   ),
                 ),
               ),
-
-              // Bagian Kanan (Promo & Help)
+              // Bagian Kanan
               Row(
                 children: [
                   Container(
@@ -61,16 +60,18 @@ class DashboardHeader extends StatelessWidget {
             ],
           ),
 
-          const SizedBox(height: 30),
+          // --- JARAK 1: DARI PROFIL KE LABEL "TOTAL BALANCE" ---
+          // Ini kita balikin normal (misal 30 atau 40) biar tulisan "Total Balance"
+          // tetap kelihatan "di tengah", gak melorot ke bawah.
+          const SizedBox(height: 35),
 
-          // --- BARIS 2: SALDO & POIN (Pakai Stack biar presisi) ---
+          // --- BARIS 2: LABEL "TOTAL BALANCE" ---
           SizedBox(
             width: double.infinity,
             height: 30,
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // 1. Label "Total Balance" + Icon Mata (Di Tengah)
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -83,7 +84,6 @@ class DashboardHeader extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    // Icon Mata (Hide Balance)
                     Icon(
                       Icons.visibility_off_outlined,
                       color: Colors.white.withOpacity(0.8),
@@ -91,8 +91,6 @@ class DashboardHeader extends StatelessWidget {
                     ),
                   ],
                 ),
-
-                // 2. Chip Poin (Di Kanan Mentok)
                 Positioned(
                   right: 0,
                   child: Container(
@@ -132,37 +130,37 @@ class DashboardHeader extends StatelessWidget {
             ),
           ),
 
-          const SizedBox(height: 5),
+          // --- JARAK 2: DARI LABEL KE ANGKA DUIT ---
+          // NAH INI KUNCINYA!
+          // Kita kasih jarak gede DI SINI (misal 45 atau 50).
+          // Efeknya: Label tetap di atas, tapi Angka didorong ke bawah nyamperin Quick Menu.
+          const SizedBox(height: 45),
 
-          // --- BARIS 3: NOMINAL SALDO (YANG DIPERBAIKI) ---
+          // --- BARIS 3: NOMINAL SALDO ---
           Row(
-            mainAxisAlignment: MainAxisAlignment.center, // Posisi di tengah
-            crossAxisAlignment: CrossAxisAlignment.start, // "Rp" nempel di atas
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // 1. Bagian "Rp" (Kecil)
               Padding(
-                padding: const EdgeInsets.only(
-                  top: 4.0,
-                ), // Geser dikit ke bawah
+                padding: const EdgeInsets.only(top: 4.0),
                 child: const Text(
                   "Rp",
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 14, // Font kecil
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
-              const SizedBox(width: 4), // Jarak spasi
-              // 2. Bagian Angka (Besar)
+              const SizedBox(width: 4),
               const Text(
                 "999.999.999",
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 32, // Font besar
+                  fontSize: 44,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.0,
-                  height: 1.0, // Ratin line height
+                  height: 1.0,
                 ),
               ),
             ],
