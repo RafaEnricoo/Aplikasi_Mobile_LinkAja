@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:async'; 
-import 'login.dart'; 
+import 'dart:async';
+import 'login.dart'; // Pastikan file ini ada
 
 class LandingPage extends StatefulWidget {
   const LandingPage({super.key});
@@ -13,10 +13,10 @@ class _LandingPageState extends State<LandingPage> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   bool _isHovering = false;
-  Timer? _timer; 
+  Timer? _timer;
 
-  // Warna Merah Vivid (Lebih Terang)
-  final Color brandRed = const Color(0xFFFF1F1F); 
+  // Warna Merah Vivid
+  final Color brandRed = const Color(0xFFFF1F1F);
   final Color greyText = const Color(0xFF7A7A7A);
 
   final List<Map<String, String>> _slides = [
@@ -33,7 +33,8 @@ class _LandingPageState extends State<LandingPage> {
     {
       'image': 'assets/images/landing_page/illustration3.png',
       'title': 'Do More, Earn More',
-      'subtitle': 'Pay bills, buy data, and enjoy\nexclusive cashback every day.',
+      'subtitle':
+          'Pay bills, buy data, and enjoy\nexclusive cashback every day.',
     },
   ];
 
@@ -48,14 +49,14 @@ class _LandingPageState extends State<LandingPage> {
       if (_currentPage < _slides.length - 1) {
         _currentPage++;
       } else {
-        _currentPage = 0; 
+        _currentPage = 0;
       }
 
       if (_pageController.hasClients) {
         _pageController.animateToPage(
           _currentPage,
-          duration: const Duration(milliseconds: 350), 
-          curve: Curves.easeIn, 
+          duration: const Duration(milliseconds: 350),
+          curve: Curves.easeIn,
         );
       }
     });
@@ -76,17 +77,17 @@ class _LandingPageState extends State<LandingPage> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            
+
             // 1. LOGO
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Image.asset(
-                'assets/images/landing_page/logo.png', 
+                'assets/images/landing_page/logo.png',
                 height: 80,
                 errorBuilder: (ctx, err, stack) => Icon(
-                  Icons.account_balance_wallet, 
-                  size: 50, 
-                  color: brandRed
+                  Icons.account_balance_wallet,
+                  size: 50,
+                  color: brandRed,
                 ),
               ),
             ),
@@ -112,9 +113,9 @@ class _LandingPageState extends State<LandingPage> {
             ),
 
             // --- JARAK ANTARA SLIDER DAN INDIKATOR ---
-            const SizedBox(height: 40), 
+            const SizedBox(height: 40),
 
-            // 3. INDIKATOR (STATIC POSITION)
+            // 3. INDIKATOR
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: List.generate(
@@ -123,27 +124,31 @@ class _LandingPageState extends State<LandingPage> {
               ),
             ),
 
-            // 4. JARAK PEMISAH (GAP BESAR KE TOMBOL)
-            // Anda bisa sesuaikan 100-180 tergantung panjang layar HP target
-            const SizedBox(height: 180), 
+            // 4. JARAK PEMISAH
+            const SizedBox(height: 120),
 
             // 5. TOMBOL "Get Started"
             Padding(
-              padding: const EdgeInsets.only(left: 24.0, right: 24.0, bottom: 40.0),
+              padding: const EdgeInsets.only(
+                left: 24.0,
+                right: 24.0,
+                bottom: 40.0,
+              ),
               child: MouseRegion(
                 onEnter: (_) => setState(() => _isHovering = true),
                 onExit: (_) => setState(() => _isHovering = false),
-                
                 child: GestureDetector(
                   onTap: () {
-                    _timer?.cancel(); 
+                    _timer?.cancel();
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const LoginScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const LoginScreen(),
+                      ),
                     );
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 200),
+                    duration: const Duration(milliseconds: 300),
                     width: double.infinity,
                     height: 55,
                     decoration: BoxDecoration(
@@ -151,9 +156,12 @@ class _LandingPageState extends State<LandingPage> {
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
-                        colors: _isHovering 
-                          ? [const Color(0xFFFF6B6B), const Color(0xFFFF3333)] 
-                          : [const Color(0xFFFF4545), const Color(0xFFE52326)], 
+                        colors: _isHovering
+                            ? [const Color(0xFFFF6B6B), const Color(0xFFFF3333)]
+                            : [
+                                const Color(0xFFFF4545),
+                                const Color(0xFFE52326),
+                              ],
                       ),
                       boxShadow: [
                         BoxShadow(
@@ -163,11 +171,13 @@ class _LandingPageState extends State<LandingPage> {
                         ),
                       ],
                     ),
+                    // --- PERBAIKAN DI SINI ---
+                    // Menggunakan Border.all agar uniform dan tidak crash
                     foregroundDecoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      border: Border(
-                        top: BorderSide(color: Colors.white.withOpacity(0.5), width: 1.5),
-                        right: BorderSide(color: Colors.white.withOpacity(0.3), width: 1.0),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.5),
+                        width: 1.5,
                       ),
                     ),
                     child: const Center(
@@ -176,7 +186,7 @@ class _LandingPageState extends State<LandingPage> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white, 
+                          color: Colors.white,
                           letterSpacing: 0.5,
                         ),
                       ),
@@ -202,37 +212,41 @@ class _LandingPageState extends State<LandingPage> {
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         children: [
-          // SPACER ATAS (Mendorong konten ke bawah agar sejajar dasar)
+          // SPACER ATAS
           const Spacer(),
 
-          // FIXED HEIGHT GAMBAR (Agar base-nya rata)
+          // FIXED HEIGHT GAMBAR
           SizedBox(
-            height: 280, 
+            height: 280,
             width: double.infinity,
             child: Image.asset(
               image,
               fit: BoxFit.contain,
-              alignment: Alignment.bottomCenter, 
+              alignment: Alignment.bottomCenter,
               errorBuilder: (ctx, err, stack) => Container(
                 color: Colors.grey[200],
-                child: const Icon(Icons.image_not_supported, size: 50, color: Colors.grey),
+                child: const Icon(
+                  Icons.image_not_supported,
+                  size: 50,
+                  color: Colors.grey,
+                ),
               ),
             ),
           ),
-          
+
           const SizedBox(height: 40),
-          
-          // FIXED HEIGHT TEKS (Agar judul mulai di titik yg sama)
+
+          // FIXED HEIGHT TEKS
           SizedBox(
-            height: 110, 
+            height: 110,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start, 
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
                   title,
                   textAlign: TextAlign.center,
                   style: const TextStyle(
-                    fontSize: 22,
+                    fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                     height: 1.2,
@@ -240,15 +254,11 @@ class _LandingPageState extends State<LandingPage> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 14),
                 Text(
                   subtitle,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: greyText,
-                    height: 1.5,
-                  ),
+                  style: TextStyle(fontSize: 16, color: greyText, height: 1.5),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
