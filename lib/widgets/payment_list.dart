@@ -66,7 +66,7 @@ class PaymentList extends StatelessWidget {
             itemCount: menuList.length,
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
-              mainAxisSpacing: 5,
+              mainAxisSpacing: 10,
               crossAxisSpacing: 10,
               childAspectRatio: 1.0,
             ),
@@ -76,7 +76,7 @@ class PaymentList extends StatelessWidget {
               return Column(
                 children: [
                   Container(
-                    padding: const EdgeInsets.all(18),
+                    padding: const EdgeInsets.all(9),
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
 
