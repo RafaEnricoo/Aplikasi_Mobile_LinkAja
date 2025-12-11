@@ -66,6 +66,8 @@ flutter:
     - assets/images/dashboard/best_deals/
     - assets/images/dashboard/special_just_for_you/
     - assets/images/dashboard/lates_updates/
+    - assets/images/landing_page/
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
