@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-// --- IMPORT WIDGETS (Sesuaikan path lu) ---
+// --- IMPORT SCREEN LAIN ---
+import 'history.dart';
+
+// --- IMPORT WIDGETS DASHBOARD ---
 import '../widgets/dashboard/header.dart';
 import '../widgets/dashboard/menu_quick.dart';
 import '../widgets/dashboard/payment_list.dart';
@@ -19,6 +22,20 @@ class DashboardScreen extends StatefulWidget {
 class _DashboardScreenState extends State<DashboardScreen> {
   int _currentIndex = 0;
 
+  // Daftar Halaman untuk Navigasi
+  late final List<Widget> _pages;
+
+  @override
+  void initState() {
+    super.initState();
+    _pages = [
+      const HomeContent(), // Index 0: Halaman Dashboard/Home
+      const HistoryScreen(), // Index 1: Halaman History (Yang tadi dibuat)
+      const Center(child: Text("Inbox Page")), // Index 2: Placeholder
+      const Center(child: Text("Account Page")), // Index 3: Placeholder
+    ];
+  }
+
   void _onNavBarTap(int index) {
     setState(() {
       _currentIndex = index;
@@ -30,109 +47,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
 
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            // --- LAYER 1: BACKGROUND MERAH ---
-            Container(
-              // Pastikan height ini cukup panjang biar cover area saldo yang baru
-              height: 380,
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage(
-                    'assets/images/dashboard/header/background.jpg',
-                  ),
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
+      // --- INI SOLUSINYA ---
+      // false = Layout TIDAK akan terdorong naik saat keyboard muncul
+      // Jadi tombol QR dan Navbar bakal tetap di bawah (ketutup keyboard)
+      resizeToAvoidBottomInset: false,
 
-            // --- LAYER 2: KONTEN UTAMA ---
-            SafeArea(
-              child: Column(
-                children: [
-                  const SizedBox(height: 20),
+      // Body menggunakan IndexedStack agar halaman tidak reload saat pindah tab
+      body: IndexedStack(index: _currentIndex, children: _pages),
 
-                  // A. HEADER (Profile, Saldo, dll)
-                  const DashboardHeader(),
-
-                  // --- MODIFIKASI 2: JARAK ANTARA HEADER & BOX PUTIH DIKECILIN ---
-                  // Tadi 60, sekarang gua ubah jadi 10 aja.
-                  // Karena Header di atas udah makin tinggi (nambah spacing dalam),
-                  // Spasi luar ini harus dikurangin biar Box Putih naik lagi.
-                  const SizedBox(height: 15),
-
-                  // B. MENU & ISI BAWAH (Stack)
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      // -- BOX PUTIH (Container Utama) --
-                      Container(
-                        width: double.infinity,
-                        margin: const EdgeInsets.only(top: 40),
-                        padding: const EdgeInsets.only(top: 80, bottom: 20),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(40),
-                            topRight: Radius.circular(40),
-                          ),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            // 1. PAYMENT LIST
-                            const PaymentList(),
-                            const SizedBox(height: 20),
-
-                            // 2. PROMO SLIDER
-                            const PromoSlider(),
-                            const SizedBox(height: 20),
-
-                            Container(
-                              height: 12,
-                              width: double.infinity,
-                              color: Colors.grey[100],
-                            ),
-                            const SizedBox(height: 10),
-
-                            // 3. BEST DEALS
-                            const BestDeals(),
-                            const SizedBox(height: 10),
-
-                            Container(
-                              height: 12,
-                              width: double.infinity,
-                              color: Colors.grey[100],
-                            ),
-                            const SizedBox(height: 10),
-
-                            // 4. LATEST UPDATES
-                            const LatestUpdates(),
-                            const SizedBox(height: 60),
-                          ],
-                        ),
-                      ),
-
-                      // -- QUICK MENU (Melayang) --
-                      // Posisinya tetap nempel di atas Box Putih
-                      const Positioned(
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        child: QuickMenu(),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-
-      // 3. FLOATING ACTION BUTTON (QR)
+      // TOMBOL QR (Floating Action Button)
       floatingActionButton: SizedBox(
         width: 65,
         height: 65,
@@ -167,10 +90,99 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      // 4. NAVBAR
+      // NAVBAR
       bottomNavigationBar: MenuNavbar(
         selectedIndex: _currentIndex,
         onTap: _onNavBarTap,
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------
+// WIDGET KONTEN HOME (DASHBOARD)
+// Dipisah di sini biar rapi
+// ---------------------------------------------------------
+class HomeContent extends StatelessWidget {
+  const HomeContent({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Stack(
+        children: [
+          // --- LAYER 1: BACKGROUND MERAH ---
+          Container(
+            height: 380,
+            width: double.infinity,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage(
+                  'assets/images/dashboard/header/background.jpg',
+                ),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+
+          // --- LAYER 2: KONTEN UTAMA ---
+          SafeArea(
+            child: Column(
+              children: [
+                const SizedBox(height: 20),
+
+                // Header Dashboard (Saldo, Nama user, dll)
+                const DashboardHeader(),
+
+                const SizedBox(height: 15),
+
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    // -- BOX PUTIH --
+                    Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(top: 40),
+                      padding: const EdgeInsets.only(top: 80, bottom: 20),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                          topRight: Radius.circular(40),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const PaymentList(),
+                          const SizedBox(height: 20),
+                          const PromoSlider(),
+                          const SizedBox(height: 20),
+                          Container(height: 12, color: Colors.grey[100]),
+                          const SizedBox(height: 10),
+                          const BestDeals(),
+                          const SizedBox(height: 10),
+                          Container(height: 12, color: Colors.grey[100]),
+                          const SizedBox(height: 10),
+                          const LatestUpdates(),
+                          const SizedBox(height: 60), // Space bawah
+                        ],
+                      ),
+                    ),
+
+                    // -- QUICK MENU (Icon Grid) --
+                    const Positioned(
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      child: QuickMenu(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
