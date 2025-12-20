@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // --- IMPORT SCREEN LAIN ---
 import 'history.dart';
+import 'scan_qris_screen.dart';
 
 // --- IMPORT WIDGETS DASHBOARD ---
 import '../widgets/dashboard/header.dart';
@@ -74,7 +75,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
             child: InkWell(
               onTap: () {
-                print("Scan QR Clicked");
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ScanQrisScreen(),
+                  ),
+                );
               },
               child: Padding(
                 padding: const EdgeInsets.all(17.0),
