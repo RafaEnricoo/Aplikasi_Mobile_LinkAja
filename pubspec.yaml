@@ -70,6 +70,7 @@ flutter:
     - assets/images/landing_page/
     - assets/images/history/
     - assets/images/qris/
+    - assets/images/account/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

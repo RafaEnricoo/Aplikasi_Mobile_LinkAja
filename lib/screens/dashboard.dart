@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 // --- IMPORT SCREEN LAIN ---
 import 'history.dart';
 import 'scan_qris_screen.dart';
+import 'account_screen.dart';
 
 // --- IMPORT WIDGETS DASHBOARD ---
 import '../widgets/dashboard/header.dart';
@@ -33,7 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       const HomeContent(), // Index 0: Halaman Dashboard/Home
       const HistoryScreen(), // Index 1: Halaman History (Yang tadi dibuat)
       const Center(child: Text("Inbox Page")), // Index 2: Placeholder
-      const Center(child: Text("Account Page")), // Index 3: Placeholder
+      const AccountScreen(), // Index 3: Placeholder
     ];
   }
 
