@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'history.dart';
 import 'scan_qris_screen.dart';
 import 'account_screen.dart';
+import 'inbox.dart';
+
 
 // --- IMPORT WIDGETS DASHBOARD ---
 import '../widgets/dashboard/header.dart';
@@ -33,7 +35,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     _pages = [
       const HomeContent(), // Index 0: Halaman Dashboard/Home
       const HistoryScreen(), // Index 1: Halaman History (Yang tadi dibuat)
-      const Center(child: Text("Inbox Page")), // Index 2: Placeholder
+      const InboxScreen(), // Index 2: Placeholder
       const AccountScreen(), // Index 3: Placeholder
     ];
   }
@@ -47,7 +49,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.white,
+
+      extendBody: true,
 
       // --- INI SOLUSINYA ---
       // false = Layout TIDAK akan terdorong naik saat keyboard muncul

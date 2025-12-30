@@ -11,14 +11,22 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   String _enteredPin = "";
   final int _pinLength = 6;
+  
+  // PIN YANG BENAR
+  final String _correctPin = "123456"; 
 
   void _onKeyPressed(String value) {
     if (_enteredPin.length < _pinLength) {
       setState(() {
         _enteredPin += value;
       });
+
       if (_enteredPin.length == _pinLength) {
-        _submitLogin();
+        if (_enteredPin == _correctPin) {
+          _submitLogin();
+        } else {
+          _handleWrongPin();
+        }
       }
     }
   }
@@ -31,8 +39,31 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void _submitLogin() {
+  void _handleWrongPin() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("PIN Salah! Coba masukan 123456"),
+        backgroundColor: Colors.red,
+        duration: Duration(seconds: 1),
+      ),
+    );
+
     Future.delayed(const Duration(milliseconds: 300), () {
+      setState(() {
+        _enteredPin = ""; 
+      });
+    });
+  }
+
+  void _submitLogin() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator(color: Color(0xFFED1C24))),
+    );
+
+    Future.delayed(const Duration(milliseconds: 800), () {
+      Navigator.pop(context); 
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const DashboardScreen()),
@@ -44,57 +75,39 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, // Background utama tetap putih
       
-      // --- CUSTOM APP BAR ---
-      // Kita ganti AppBar biasa dengan PreferredSize agar bisa pakai Container + Dekorasi
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(60), // Tinggi Header
-        child: Container(
+      // HEADER (Mirip desain Keypad nanti)
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        toolbarHeight: 60,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          "Login",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        ),
+        flexibleSpace: Container(
           decoration: BoxDecoration(
-            color: Colors.white, // Background Shape Putih
-            
-            // 1. STROKE / BORDER BAWAH
+            color: Colors.white,
             border: Border(
-              bottom: BorderSide(
-                color: Colors.grey.shade200, // Warna stroke tipis
-                width: 1.0,
-              ),
+              bottom: BorderSide(color: Colors.grey.shade200, width: 1.0),
             ),
-            
-            // 2. SHADOW (BAYANGAN DI BAWAH HEADER)
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04), // Bayangan halus
-                offset: const Offset(0, 4), // Arah bayangan ke bawah
-                blurRadius: 6, // Keburaman bayangan
+                color: Colors.black.withOpacity(0.04),
+                offset: const Offset(0, 4),
+                blurRadius: 6,
               ),
             ],
-          ),
-          child: SafeArea(
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Tombol Back (Kiri)
-                Positioned(
-                  left: 8, // Jarak dari kiri
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ),
-                
-                // Teks "Login" (Tengah)
-                const Text(
-                  "Login",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
           ),
         ),
       ),
@@ -103,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           const SizedBox(height: 40),
           
-          // --- INSTRUKSI ---
+          // INSTRUKSI
           const Text(
             "Input PIN",
             style: TextStyle(
@@ -115,66 +128,92 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(height: 10),
           const Text(
             "Please enter your PIN",
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
 
-          const SizedBox(height: 40),
+          const SizedBox(height: 30),
 
-          // --- INDIKATOR PIN ---
+          // INDIKATOR PIN
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(_pinLength, (index) {
               bool isFilled = index < _enteredPin.length;
-              return Container(
+              return AnimatedContainer(
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeInOut,
                 margin: const EdgeInsets.symmetric(horizontal: 10),
                 width: 16, 
                 height: 16,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: isFilled ? const Color(0xFFED1C24) : Colors.transparent, 
-                  border: Border.all(
-                    color: isFilled ? const Color(0xFFED1C24) : Colors.grey.shade400,
-                    width: 1.5,
-                  ),
+                  gradient: isFilled 
+                      ? const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xFFFF5C5C), 
+                            Color(0xFFED1C24), 
+                          ],
+                        )
+                      : null,
+                  border: isFilled 
+                      ? null 
+                      : Border.all(color: const Color.fromARGB(255, 212, 212, 212), width: 1.5),
                 ),
               );
             }),
           ),
 
+          // Spacer ini mendorong konten Forgot PIN & Keypad ke bawah
           const Spacer(),
 
-          // --- FORGOT PIN ---
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Forgot PIN? ",
-                style: TextStyle(color: Colors.black54, fontSize: 14),
-              ),
-              GestureDetector(
-                onTap: () {
-                  print("Reset clicked");
-                },
-                child: const Text(
-                  "Reset",
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
+          // --- FORGOT PIN (DILUAR BACKGROUND KEYPAD) ---
+          Padding(
+            padding: const EdgeInsets.only(bottom: 30.0), // Jarak ke Keypad Panel
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Forgot PIN? ",
+                  style: TextStyle(color: Colors.black54, fontSize: 14),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    print("Reset clicked");
+                  },
+                  child: const Text(
+                    "Reset",
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
-          const SizedBox(height: 30),
-
-          // --- KEYPAD ---
+          // --- KEYPAD PANEL (BACKGROUND HEADER STYLE) ---
           Container(
-            padding: const EdgeInsets.only(bottom: 40, left: 40, right: 40),
+            width: double.infinity, // Lebar penuh
+            padding: const EdgeInsets.only(top: 30, bottom: 40, left: 40, right: 40),
+            
+            // DEKORASI MIRIP HEADER (Tapi shadow & border di atas)
+            decoration: BoxDecoration(
+              color: Colors.white, // Warna dasar panel
+
+              
+              // Shadow mengarah ke ATAS (offset -4)
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 10,
+                  offset: const Offset(0, -1), 
+                ),
+              ],
+            ),
+            
             child: Column(
               children: [
                 _buildKeypadRow(['1', '2', '3']),

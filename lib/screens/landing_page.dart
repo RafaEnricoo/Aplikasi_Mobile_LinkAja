@@ -45,7 +45,11 @@ class _LandingPageState extends State<LandingPage> {
   }
 
   void _startAutoScroll() {
+    // Safety: Pastikan matikan timer lama dulu (jika ada) sebelum buat yang baru
+    _timer?.cancel(); 
+
     _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      // ... logika scroll tetap sama ...
       if (_currentPage < _slides.length - 1) {
         _currentPage++;
       } else {
@@ -139,13 +143,20 @@ class _LandingPageState extends State<LandingPage> {
                 onExit: (_) => setState(() => _isHovering = false),
                 child: GestureDetector(
                   onTap: () {
-                    _timer?.cancel();
+                    // 1. Matikan timer saat mau pergi (sudah benar)
+                    _timer?.cancel(); 
+                    
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => const LoginScreen(),
                       ),
-                    );
+                    ).then((_) {
+                      // 2. TAMBAHAN BARU:
+                      // Bagian ini akan jalan otomatis saat user menekan Back dari LoginScreen
+                      // Kita nyalakan lagi scroll otomatisnya
+                      _startAutoScroll();
+                    });
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),

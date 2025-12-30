@@ -148,7 +148,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ),
 
                 // Space bawah agar tidak ketutup navbar
-                const SizedBox(height: 100),
+                const SizedBox(height: 120),
               ],
             ),
           ),

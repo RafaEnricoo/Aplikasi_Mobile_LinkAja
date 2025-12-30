@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../widgets/account/account_menu_tile.dart';
 import '../widgets/account/profile_card.dart';
+import 'landing_page.dart'; // 1. PASTIKAN IMPORT INI ADA
 
 class AccountScreen extends StatelessWidget {
   const AccountScreen({super.key});
@@ -150,13 +151,18 @@ class AccountScreen extends StatelessWidget {
 
                   const SizedBox(height: 30),
 
-                  // TOMBOL LOGOUT
+                  // TOMBOL LOGOUT (UPDATED)
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: OutlinedButton(
+                      // 2. UPDATE LOGIKA DISINI
                       onPressed: () {
-                        print("Logout Clicked");
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const LandingPage()),
+                          (route) => false, // Hapus semua stack halaman sebelumnya
+                        );
                       },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.red),
@@ -176,7 +182,7 @@ class AccountScreen extends StatelessWidget {
                   ),
 
                   // Spasi Bawah biar gak ketutup navbar
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 130),
                 ],
               ),
             ),

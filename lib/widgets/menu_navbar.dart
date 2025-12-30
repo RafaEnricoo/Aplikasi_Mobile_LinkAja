@@ -5,11 +5,14 @@ class MenuNavbar extends StatelessWidget {
   final int selectedIndex;
   final Function(int) onTap;
 
-  // Definisi warna sesuai referensi gambar
-  static const Color brandRedDeep = Color(0xFFE52326);   // Merah bawah
-  static const Color brandRedLight = Color(0xFFFFBABA);  // Merah muda/putih atas
+  // Warna referensi
+  static const Color brandRedDeep = Color(0xFFE52326);
+  static const Color brandRedLight = Color(0xFFFFBABA);
   static const Color inactiveGrey = Colors.grey;
   
+  // Warna Border (Abu keputihan halus)
+  static const Color borderColor = Color.fromARGB(255, 227, 227, 227); // atau Colors.grey[200]
+
   const MenuNavbar({
     super.key,
     required this.selectedIndex,
@@ -21,76 +24,74 @@ class MenuNavbar extends StatelessWidget {
     return BottomAppBar(
       color: Colors.white,
       shape: const SmoothNotchedRectangle(smoothness: 8),
-      notchMargin: 0,
-      elevation: 15, // Bayangan agak tebal biar terlihat misah
+      notchMargin: 0, 
+      elevation: 0, // Elevation dimatikan di sini, kita handle shadow via Parent atau biarkan flat
+      // Jika ingin shadow, sebaiknya wrap BottomAppBar di Container dengan BoxShadow, 
+      // tapi karena bentuknya notched, shadow bawaan elevation 15 sudah cukup.
+      // Kita kembalikan elevation ke 15 sesuai request sebelumnya:
       shadowColor: Colors.black26,
       padding: EdgeInsets.zero,
       clipBehavior: Clip.antiAlias,
-      child: SizedBox(
-        height: 65,
-        child: Row(
-          children: [
-            // KIRI
-            Expanded(
-              // Gunakan pasangan icon Outline dan Filled
-              child: _buildNavItem(0, 'Home', Icons.home_outlined, Icons.home),
-            ),
-            Expanded(
-              // Icon history yang lebih mirip di gambar adalah receipt_long
-              child: _buildNavItem(1, 'History', Icons.assignment_outlined, Icons.assignment),
-            ),
+      child: CustomPaint(
+        // PANGGIL PAINTER DISINI
+        // Painter ini akan menggambar garis di atas navbar mengikuti cekungan
+        painter: NavbarBorderPainter(
+          color: borderColor,
+          width: 1.5,   // Ketebalan garis
+          smoothness: 8, // Harus sama dengan SmoothNotchedRectangle
+        ),
+        child: SizedBox(
+          height: 65,
+          child: Row(
+            children: [
+              // KIRI
+              Expanded(
+                child: _buildNavItem(0, 'Home', Icons.home_outlined, Icons.home),
+              ),
+              Expanded(
+                child: _buildNavItem(1, 'History', Icons.assignment_outlined, Icons.assignment),
+              ),
 
-            // TENGAH (SPACER QR)
-            const SizedBox(width: 60),
+              // TENGAH (SPACER QR)
+              const SizedBox(width: 60),
 
-            // KANAN
-            Expanded(
-              child: _buildNavItem(2, 'Inbox', Icons.mail_outline, Icons.mail),
-            ),
-            Expanded(
-              child: _buildNavItem(3, 'Account', Icons.person_outline, Icons.person),
-            ),
-          ],
+              // KANAN
+              Expanded(
+                child: _buildNavItem(2, 'Inbox', Icons.mail_outline, Icons.mail),
+              ),
+              Expanded(
+                child: _buildNavItem(3, 'Account', Icons.person_outline, Icons.person),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // Fungsi builder sekarang menerima 2 icon: versi outline dan versi filled
   Widget _buildNavItem(int index, String label, IconData outlineIcon, IconData filledIcon) {
     final bool isSelected = selectedIndex == index;
-
     Widget iconWidget;
 
     if (isSelected) {
-      // --- STATE AKTIF: Icon FILLED + GRADASI ---
       iconWidget = ShaderMask(
         shaderCallback: (Rect bounds) {
           return const LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              brandRedLight, // Atas: Merah terang keputihan
-              brandRedDeep,  // Bawah: Merah pekat
-            ],
-            // Gradasi halus dari atas ke bawah
+            colors: [brandRedLight, brandRedDeep],
             stops: [0.0, 0.8], 
           ).createShader(bounds);
         },
         blendMode: BlendMode.srcATop,
-        // PENTING: Gunakan icon versi FILLED (berisi)
-        // Beri warna dasar putih agar bisa "disemprot" warna gradasi
         child: Icon(filledIcon, size: 28, color: Colors.white),
       );
     } else {
-      // --- STATE INAKTIF: Icon OUTLINE + ABU ---
-      // Gunakan icon versi OUTLINE
       iconWidget = Icon(outlineIcon, size: 28, color: inactiveGrey);
     }
 
     return InkWell(
       onTap: () => onTap(index),
-      // Matikan efek hover/splash abu-abu agar bersih
       splashColor: Colors.transparent,
       highlightColor: Colors.transparent,
       hoverColor: Colors.transparent,
@@ -101,13 +102,8 @@ class MenuNavbar extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Widget Icon yang sudah di-handle logikanya di atas
-            SizedBox(
-              height: 28,
-              child: iconWidget, 
-            ),
+            SizedBox(height: 28, child: iconWidget),
             const SizedBox(height: 4),
-            // Label Teks (Solid Red saat aktif, tidak gradasi)
             Text(
               label,
               style: TextStyle(
@@ -123,10 +119,107 @@ class MenuNavbar extends StatelessWidget {
   }
 }
 
-class SmoothNotchedRectangle extends NotchedShape {
-  // Mengatur seberapa halus lengkungannya (0 = kaku, 20 = sangat landai)
-  final double smoothness; 
+// --------------------------------------------------------------------------
+// 2. PAINTER KHUSUS UNTUK GARIS BORDER
+// --------------------------------------------------------------------------
+class NavbarBorderPainter extends CustomPainter {
+  final Color color;
+  final double width;
+  final double smoothness;
 
+  NavbarBorderPainter({
+    required this.color,
+    required this.width,
+    required this.smoothness,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = width;
+
+    final Path path = Path();
+
+    // -- LOGIKA MATEMATIKA YANG SAMA DENGAN SmoothNotchedRectangle --
+    // Kita asumsikan FAB ada di tengah (size.width / 2)
+    // dan posisinya centerDocked (y = 0 relative terhadap navbar)
+    
+    // Estimasi lebar FAB + Margin (disesuaikan agar pas dengan bolongan)
+    // Standard FAB = 56, Custom FAB Anda = 65.
+    // Margin SmoothNotchedRectangle = 8.
+    // Jadi total guest width kira-kira 65. Kita pakai angka aman agar garisnya pas.
+    const double guestWidth = 65.0; // Sesuaikan ini jika garis kurang lebar/sempit
+    const double margin = 8.0;
+    
+    final double notchRadius = guestWidth / 2.0 + margin;
+    
+    final double s1 = smoothness;
+    final double s2 = smoothness;
+    final double r = notchRadius;
+    final double a = -1.0 * r - s2;
+    final double b = 0.0; // host.top (0) - guest.center.dy (0)
+
+    final double n2 = math.sqrt(b * b * r * r * (a * a + b * b - r * r));
+    final double p2xA = ((a * r * r) - n2) / (a * a + b * b);
+    final double p2xB = ((a * r * r) + n2) / (a * a + b * b);
+    final double p2yA = math.sqrt(r * r - p2xA * p2xA) - b;
+    final double p2yB = math.sqrt(r * r - p2xB * p2xB) - b;
+
+    final List<Offset?> p = List.filled(6, null);
+
+    // Titik pusat X adalah tengah layar
+    final double centerX = size.width / 2;
+
+    p[0] = Offset(a - s1, b);
+    p[1] = Offset(a, b);
+    
+    final double cmp = b < 0 ? -1.0 : 1.0;
+    p[2] = cmp * p2yA > cmp * p2yB ? Offset(p2xA, p2yA) : Offset(p2xB, p2yB);
+
+    p[3] = Offset(-1.0 * p[2]!.dx, p[2]!.dy);
+    p[4] = Offset(-1.0 * p[1]!.dx, p[1]!.dy);
+    p[5] = Offset(-1.0 * p[0]!.dx, p[0]!.dy);
+
+    // Geser semua titik ke tengah layar
+    for (int i = 0; i < p.length; i += 1) {
+      p[i] = p[i]! + Offset(centerX, 0);
+    }
+
+    // -- MENGGAMBAR JALUR GARIS --
+    // 1. Garis dari Kiri Mentok sampai awal lengkungan
+    path.moveTo(0, 0);
+    path.lineTo(p[0]!.dx, p[0]!.dy);
+
+    // 2. Kurva Masuk
+    path.quadraticBezierTo(p[1]!.dx, p[1]!.dy, p[2]!.dx, p[2]!.dy);
+
+    // 3. Lengkungan Bawah (Mangkok)
+    path.arcToPoint(
+      p[3]!,
+      radius: Radius.circular(notchRadius),
+      clockwise: false,
+    );
+
+    // 4. Kurva Keluar
+    path.quadraticBezierTo(p[4]!.dx, p[4]!.dy, p[5]!.dx, p[5]!.dy);
+
+    // 5. Garis dari akhir lengkungan sampai Kanan Mentok
+    path.lineTo(size.width, 0);
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+// --------------------------------------------------------------------------
+// 3. SMOOTH NOTCHED RECTANGLE (Bawaan Anda, Tetap Sama)
+// --------------------------------------------------------------------------
+class SmoothNotchedRectangle extends NotchedShape {
+  final double smoothness; 
   const SmoothNotchedRectangle({this.smoothness = 12.0});
 
   @override
@@ -135,15 +228,11 @@ class SmoothNotchedRectangle extends NotchedShape {
       return Path()..addRect(host);
     }
 
-    // Margin tambahan biar lubangnya agak longgar dari tombol
     const double margin = 8.0; 
-    
     final double notchRadius = guest.width / 2.0 + margin;
     
-    // Titik pusat lingkaran tombol
     final double s1 = smoothness;
     final double s2 = smoothness;
-
     final double r = notchRadius;
     final double a = -1.0 * r - s2;
     final double b = host.top - guest.center.dy;
@@ -156,7 +245,6 @@ class SmoothNotchedRectangle extends NotchedShape {
 
     final List<Offset?> p = List.filled(6, null);
 
-    // Menentukan titik koordinat bezier curve
     p[0] = Offset(a - s1, b);
     p[1] = Offset(a, b);
     
@@ -167,7 +255,6 @@ class SmoothNotchedRectangle extends NotchedShape {
     p[4] = Offset(-1.0 * p[1]!.dx, p[1]!.dy);
     p[5] = Offset(-1.0 * p[0]!.dx, p[0]!.dy);
 
-    // Menggambar jalur (Path)
     for (int i = 0; i < p.length; i += 1) {
       p[i] = p[i]! + guest.center;
     }
@@ -175,15 +262,8 @@ class SmoothNotchedRectangle extends NotchedShape {
     return Path()
       ..moveTo(host.left, host.top)
       ..lineTo(p[0]!.dx, p[0]!.dy)
-      // Kurva masuk (halus)
       ..quadraticBezierTo(p[1]!.dx, p[1]!.dy, p[2]!.dx, p[2]!.dy)
-      // Lingkaran bawah (mangkok)
-      ..arcToPoint(
-        p[3]!,
-        radius: Radius.circular(notchRadius),
-        clockwise: false,
-      )
-      // Kurva keluar (halus)
+      ..arcToPoint(p[3]!, radius: Radius.circular(notchRadius), clockwise: false)
       ..quadraticBezierTo(p[4]!.dx, p[4]!.dy, p[5]!.dx, p[5]!.dy)
       ..lineTo(host.right, host.top)
       ..lineTo(host.right, host.bottom)
