@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-// Definisi Model data di file yang sama (biar praktis)
+// Model Data
 class InboxModel {
   final String title;
   final String description;
@@ -25,76 +25,85 @@ class InboxScreen extends StatefulWidget {
 }
 
 class _InboxScreenState extends State<InboxScreen> {
-  // --- WARNA ---
   final Color brandRed = const Color(0xFFE52326);
-  final Color lightRedBg = const Color(0xFFFFEBEB); // Warna bg icon bulat
 
-  // --- DATA DUMMY (Sesuai Gambar) ---
+  // --- DATA MASTER ---
   final List<InboxModel> _inboxList = [
     InboxModel(
       title: "Info LinkAja",
       description: "Sorry, your PIN or password is incorrect, please check and try again.",
       date: "12 Sep 2025 • 00:00",
       type: "info",
-      isUnread: true,
+      isUnread: true, 
     ),
     InboxModel(
       title: "Info LinkAja",
       description: "Sorry, your PIN or password is incorrect, please check and try again.",
       date: "12 Sep 2025 • 00:00",
       type: "info",
-      isUnread: true,
+      isUnread: true, 
     ),
     InboxModel(
       title: "Payday Time!",
       description: "Save up to IDR 200,000",
       date: "12 Sep 2025 • 00:00",
       type: "promo",
-      isUnread: true,
+      isUnread: true, 
     ),
     InboxModel(
       title: "Cash Withdrawal with LinkAja! at ATM",
       description: "Easy and practical without a card!",
       date: "12 Sep 2025 • 00:00",
       type: "promo",
-      isUnread: true,
+      isUnread: true, 
     ),
     InboxModel(
       title: "Verification Success",
-      description: "Email has been verified. You can use this email to recover your account or charge your pin when you forget.",
+      description: "Email has been verified. You can use this email to recover your account.",
       date: "12 Sep 2025 • 00:00",
       type: "info",
-      isUnread: false, // Sudah dibaca (tidak ada titik merah)
+      isUnread: false, 
     ),
   ];
 
-  int _selectedFilterIndex = 0; // 0: All, 1: Unread, 2: Promo, 3: Info
+  int _selectedFilterIndex = 0; 
+
+  // --- LOGIKA FILTER ---
+  List<InboxModel> get _filteredList {
+    switch (_selectedFilterIndex) {
+      case 1: // Unread
+        return _inboxList.where((item) => item.isUnread == true).toList();
+      case 2: // Promo
+        return _inboxList.where((item) => item.type == 'promo').toList();
+      case 3: // Info
+        return _inboxList.where((item) => item.type == 'info').toList();
+      case 0: // All Inbox
+      default:
+        return _inboxList;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final displayList = _filteredList;
+
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          // 1. HEADER MERAH
+          // 1. Header (Updated)
           _buildHeader(),
 
-          // 2. KONTEN SCROLLABLE
           Expanded(
             child: ListView(
               padding: EdgeInsets.zero,
               children: [
                 const SizedBox(height: 20),
-
-                // --- FILTER MENU (ICON BULAT) ---
                 _buildFilterRow(),
-
-                const SizedBox(height: 20),
-                const Divider(thickness: 1, height: 1, color: Color(0xFFEEEEEE)),
-
-                // --- LABEL BULAN ---
+                const SizedBox(height: 40), 
+                
                 const Padding(
-                  padding: EdgeInsets.fromLTRB(20, 20, 20, 10),
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 10),
                   child: Text(
                     "September 2025",
                     style: TextStyle(
@@ -105,10 +114,22 @@ class _InboxScreenState extends State<InboxScreen> {
                   ),
                 ),
 
-                // --- LIST ITEM ---
-                ..._inboxList.map((data) => _buildInboxItem(data)),
+                const Divider(thickness: 1, height: 1, color: Color(0xFFEEEEEE)),
 
-                // Padding bawah agar tidak ketutup Navbar
+                // Tampilkan Data
+                if (displayList.isEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 50),
+                    child: Center(
+                      child: Text(
+                        "No messages here",
+                        style: TextStyle(color: Colors.grey[400]),
+                      ),
+                    ),
+                  )
+                else
+                  ...displayList.map((data) => _buildInboxItem(data)),
+
                 const SizedBox(height: 100),
               ],
             ),
@@ -118,32 +139,35 @@ class _InboxScreenState extends State<InboxScreen> {
     );
   }
 
-  // --- WIDGET HEADER MERAH ---
+  // --- HEADER (POSISI DIPERBAIKI) ---
   Widget _buildHeader() {
     return Container(
-      height: 110, // Sesuaikan tinggi
+      // Tinggi total header (disamakan kurleb dengan visual login)
+      height: 100, 
       width: double.infinity,
       decoration: BoxDecoration(
         color: brandRed,
         image: const DecorationImage(
-          // Gunakan asset header yang sama dengan history jika ada
           image: AssetImage('assets/images/history/header.png'), 
           fit: BoxFit.cover,
-          opacity: 0.5, // Biar tidak terlalu nabrak teks
+          opacity: 0.5,
         ),
       ),
       child: SafeArea(
         bottom: false,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: 20),
-            child: const Text(
-              "Inbox",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+        child: Container(
+          // --- KUNCI POSISI ---
+          // Kita buat wadah setinggi 60px (standar Toolbar/AppBar)
+          // Lalu kita 'Center' teks di dalamnya.
+          // Ini menjamin posisinya sama persis dengan 'Login' yang pakai AppBar.
+          height: 60,
+          alignment: Alignment.center, 
+          child: const Text(
+            "Inbox",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
             ),
           ),
         ),
@@ -151,77 +175,69 @@ class _InboxScreenState extends State<InboxScreen> {
     );
   }
 
-  // --- WIDGET FILTER ROW ---
   Widget _buildFilterRow() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildFilterItem(0, "All Inbox", Icons.mark_email_unread_outlined, isActive: true),
-          _buildFilterItem(1, "Unread", Icons.mail_outline),
-          _buildFilterItem(2, "Promo", Icons.percent),
-          _buildFilterItem(3, "Information", Icons.info_outline),
+          _buildFilterItem(0, "All Inbox", "all_inbox"),
+          _buildFilterItem(1, "Unread", "unread"),
+          _buildFilterItem(2, "Promo", "promo"),
+          _buildFilterItem(3, "Information", "info"),
         ],
       ),
     );
   }
 
-  Widget _buildFilterItem(int index, String label, IconData icon, {bool isActive = false}) {
-    return Column(
-      children: [
-        Stack(
-          children: [
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isActive ? const Color(0xFFFFEBEB) : Colors.grey[100],
-                border: isActive 
-                  ? Border.all(color: const Color(0xFFFFCCCC)) 
-                  : Border.all(color: Colors.transparent),
-              ),
-              child: Icon(
-                icon,
-                color: isActive ? brandRed : Colors.grey[600],
-                size: 24,
-              ),
-            ),
-            // Red Dot Badge (Hiasan)
-            Positioned(
-              top: 2,
-              right: 2,
-              child: Container(
-                width: 10,
-                height: 10,
-                decoration: BoxDecoration(
-                  color: brandRed,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 1.5),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: 12,
-            color: isActive ? brandRed : Colors.grey[600],
-            fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+  Widget _buildFilterItem(int index, String label, String assetBaseName) {
+    bool isActive = _selectedFilterIndex == index;
+    String suffix = isActive ? '1' : '0';
+    String imagePath = 'assets/images/inbox/$assetBaseName$suffix.png';
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedFilterIndex = index;
+        });
+      },
+      child: Column(
+        children: [
+          Image.asset(
+            imagePath,
+            width: 55,
+            height: 55,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) {
+              return Container(
+                width: 55, height: 55, 
+                color: Colors.grey[200], 
+                child: const Icon(Icons.broken_image, size: 20),
+              );
+            },
           ),
-        ),
-      ],
+          const SizedBox(height: 8),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isActive ? brandRed : Colors.grey[600],
+              fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  // --- WIDGET LIST ITEM ---
   Widget _buildInboxItem(InboxModel data) {
-    // Tentukan icon berdasarkan tipe
-    IconData iconData = data.type == 'promo' ? Icons.percent : Icons.info_outline;
+    String listIconAsset = data.type == 'promo' 
+        ? 'assets/images/inbox/promo2.png' 
+        : 'assets/images/inbox/info2.png';
     
+    final Color textColor = data.isUnread ? Colors.black87 : Colors.grey;
+    final Color descColor = data.isUnread ? Colors.black87 : Colors.grey[400]!;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
       decoration: const BoxDecoration(
@@ -232,24 +248,15 @@ class _InboxScreenState extends State<InboxScreen> {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 1. Icon Bulat Kiri
-          Container(
+          Image.asset(
+            listIconAsset,
             width: 45,
             height: 45,
-            decoration: BoxDecoration(
-              color: lightRedBg,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              iconData,
-              color: brandRed,
-              size: 22,
-            ),
+            fit: BoxFit.contain,
           ),
           
           const SizedBox(width: 15),
 
-          // 2. Teks Konten
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,13 +266,13 @@ class _InboxScreenState extends State<InboxScreen> {
                   children: [
                     Text(
                       data.title,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: textColor, 
                       ),
                     ),
-                    // Dot merah kalau unread
+                    
                     if (data.isUnread)
                       Container(
                         width: 8,
@@ -284,7 +291,7 @@ class _InboxScreenState extends State<InboxScreen> {
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 13,
-                    color: Colors.grey[700],
+                    color: descColor,
                     height: 1.4,
                   ),
                 ),
@@ -293,7 +300,7 @@ class _InboxScreenState extends State<InboxScreen> {
                   data.date,
                   style: TextStyle(
                     fontSize: 11,
-                    color: Colors.grey[500],
+                    color: textColor, 
                   ),
                 ),
               ],

@@ -156,13 +156,9 @@ class AccountScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 50,
                     child: OutlinedButton(
-                      // 2. UPDATE LOGIKA DISINI
+                      // PANGGIL FUNGSI DIALOG DI SINI
                       onPressed: () {
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => const LandingPage()),
-                          (route) => false, // Hapus semua stack halaman sebelumnya
-                        );
+                        _showLogoutDialog(context); 
                       },
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.red),
@@ -237,3 +233,140 @@ class AccountScreen extends StatelessWidget {
     );
   }
 }
+
+// Fungsi untuk memunculkan Bottom Sheet Konfirmasi Logout
+  void _showLogoutDialog(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true, // Agar tinggi menyesuaikan isi konten (tidak default setengah layar)
+      backgroundColor: Colors.transparent, // Transparan agar kita bisa atur lengkungan sudut sendiri
+      builder: (context) {
+        return Container(
+          // Dekorasi Panel Putih
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            // Lengkungan hanya di sudut kiri atas & kanan atas
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          ),
+          // Padding di dalam sheet
+          padding: const EdgeInsets.fromLTRB(24, 30, 24, 40), 
+          
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // Tinggi menyesuaikan konten
+            children: [
+              // 1. BAGIAN ATAS: ICON + TEKS
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Icon Logout
+                  Image.asset(
+                    'assets/images/account/logout.png',
+                    width: 50, 
+                    height: 50,
+                    fit: BoxFit.contain,
+                  ),
+                  const SizedBox(width: 16),
+                  
+                  // Teks
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Logout from your account?",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          "Make sure you remember your account’s PIN to login again later!",
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 30), // Jarak ke tombol
+
+              // 2. BAGIAN BAWAH: TOMBOL AKSI
+              Row(
+                children: [
+                  // TOMBOL YES (Outline Merah)
+                  Expanded(
+                    child: SizedBox(
+                      height: 45,
+                      child: OutlinedButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Tutup Sheet
+                          
+                          // Logout & Pindah ke Landing
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(builder: (context) => const LandingPage()),
+                            (route) => false,
+                          );
+                        },
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Color(0xFFE52326)),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          foregroundColor: const Color(0xFFE52326),
+                        ),
+                        child: const Text(
+                          "Yes, Logout",
+                          style: TextStyle(
+                            color: Color(0xFFE52326),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  
+                  const SizedBox(width: 12),
+
+                  // TOMBOL CANCEL (Full Merah)
+                  Expanded(
+                    child: SizedBox(
+                      height: 45,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context); // Tutup sheet
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFE52326),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          elevation: 0,
+                        ),
+                        child: const Text(
+                          "Cancel",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }

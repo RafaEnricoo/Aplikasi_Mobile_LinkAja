@@ -71,6 +71,7 @@ flutter:
     - assets/images/history/
     - assets/images/qris/
     - assets/images/account/
+    - assets/images/inbox/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
