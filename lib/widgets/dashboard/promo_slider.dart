@@ -10,15 +10,15 @@ class PromoSlider extends StatefulWidget {
 
 class _PromoSliderState extends State<PromoSlider> {
   late PageController _pageController;
-  
+
   // --- KONFIGURASI BARU ---
   // viewportFraction 0.85 artinya gambar tengah makan 85% lebar layar.
   // Sisanya (15%) dibagi ke kiri dan kanan untuk "peeking".
-  final double _viewportFraction = 0.85; 
-  
+  final double _viewportFraction = 0.85;
+
   // Skala gambar samping. 0.8 artinya gambar samping ukurannya 80% dari gambar tengah.
-  final double _sideScale = 0.8; 
-  
+  final double _sideScale = 0.8;
+
   final double _height = 170.0;
 
   // ... (Variabel Timer & List gambar TETAP SAMA) ...
@@ -26,19 +26,18 @@ class _PromoSliderState extends State<PromoSlider> {
   Timer? _timer;
 
   final List<String> promoImages = [
-    'assets/images/dashboard/special_just_for_you/special1.png',
-    'assets/images/dashboard/special_just_for_you/special2.png',
-    'assets/images/dashboard/special_just_for_you/special3.png',
-    'assets/images/dashboard/special_just_for_you/special4.png',
-    'assets/images/dashboard/special_just_for_you/special5.png',
+    'assets/images/dashboard/special_just_for_you/special1.PNG',
+    'assets/images/dashboard/special_just_for_you/special2.PNG',
+    'assets/images/dashboard/special_just_for_you/special3.PNG',
+    'assets/images/dashboard/special_just_for_you/special4.PNG',
+    'assets/images/dashboard/special_just_for_you/special5.PNG',
   ];
-
   @override
   void initState() {
     super.initState();
     // Gunakan variabel _viewportFraction yang baru
     _pageController = PageController(viewportFraction: _viewportFraction);
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _startAutoPlay();
     });
@@ -50,14 +49,14 @@ class _PromoSliderState extends State<PromoSlider> {
       if (_currentPageIndex < promoImages.length - 1) {
         _currentPageIndex++;
       } else {
-        _currentPageIndex = 0; 
+        _currentPageIndex = 0;
       }
 
       if (_pageController.hasClients) {
         _pageController.animateToPage(
           _currentPageIndex,
-          duration: const Duration(milliseconds: 800), 
-          curve: Curves.fastOutSlowIn, 
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.fastOutSlowIn,
         );
       }
     });
@@ -92,9 +91,9 @@ class _PromoSliderState extends State<PromoSlider> {
           onPanCancel: () => _startAutoPlay(),
           onPanEnd: (_) => _startAutoPlay(),
           child: SizedBox(
-            height: 150, 
+            height: 150,
             child: PageView.builder(
-              clipBehavior: Clip.none, 
+              clipBehavior: Clip.none,
               controller: _pageController,
               itemCount: promoImages.length,
               onPageChanged: (index) {
@@ -107,7 +106,7 @@ class _PromoSliderState extends State<PromoSlider> {
                   animation: _pageController,
                   builder: (context, child) {
                     double pagePosition = 0.0;
-                    
+
                     if (_pageController.position.haveDimensions) {
                       pagePosition = _pageController.page!;
                     } else {
@@ -116,10 +115,10 @@ class _PromoSliderState extends State<PromoSlider> {
 
                     // Menghitung selisih posisi
                     double difference = (index - pagePosition).abs();
-                    
+
                     // --- LOGIKA SKALA YANG DIPERBAIKI ---
                     double scale;
-                    
+
                     // Jika selisih < 1 (sedang transisi atau aktif)
                     if (difference < 1.0) {
                       // Rumus Interpolasi Linear:
@@ -133,11 +132,11 @@ class _PromoSliderState extends State<PromoSlider> {
 
                     // Matrix Transformasi
                     Matrix4 matrix = Matrix4.identity();
-                    
+
                     // Terjemahan Vertikal (Biar gambar kecil tetap 'Center Vertical')
                     // Rumus: tinggi * (1 - scale) / 2
                     double verticalTranslation = 150 * (1 - scale) / 2;
-                    
+
                     matrix = Matrix4.diagonal3Values(1, scale, 1)
                       ..setTranslationRaw(0, verticalTranslation, 0);
 
@@ -149,12 +148,14 @@ class _PromoSliderState extends State<PromoSlider> {
                   },
                   // Child tetap sama
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12), // Padding dikecilkan dikit
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                    ), // Padding dikecilkan dikit
                     child: Align(
-                      alignment: Alignment.center, 
+                      alignment: Alignment.center,
                       child: Container(
                         decoration: BoxDecoration(
-                          color: Colors.white, 
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(15),
                           boxShadow: [
                             BoxShadow(
@@ -168,8 +169,10 @@ class _PromoSliderState extends State<PromoSlider> {
                           borderRadius: BorderRadius.circular(15),
                           child: Image.asset(
                             promoImages[index],
-                            fit: BoxFit.fill, // Ganti ke FILL atau COVER biar penuh
-                            width: double.infinity, // Paksa lebar penuh container
+                            fit: BoxFit
+                                .fill, // Ganti ke FILL atau COVER biar penuh
+                            width:
+                                double.infinity, // Paksa lebar penuh container
                           ),
                         ),
                       ),
@@ -180,7 +183,7 @@ class _PromoSliderState extends State<PromoSlider> {
             ),
           ),
         ),
-        
+
         const SizedBox(height: 20),
 
         // Indikator Dots (TETAP SAMA)

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dashboard.dart'; // Import dashboard untuk navigasi
+import 'dashboard.dart';
+import 'landing_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -11,9 +13,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   String _enteredPin = "";
   final int _pinLength = 6;
-  
+
   // PIN YANG BENAR
-  final String _correctPin = "123456"; 
+  final String _correctPin = "123456";
 
   void _onKeyPressed(String value) {
     if (_enteredPin.length < _pinLength) {
@@ -50,20 +52,31 @@ class _LoginScreenState extends State<LoginScreen> {
 
     Future.delayed(const Duration(milliseconds: 300), () {
       setState(() {
-        _enteredPin = ""; 
+        _enteredPin = "";
       });
     });
   }
 
-  void _submitLogin() {
+  void _submitLogin() async {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => const Center(child: CircularProgressIndicator(color: Color(0xFFED1C24))),
+      builder: (context) => const Center(
+        child: CircularProgressIndicator(color: Color(0xFFED1C24)),
+      ),
     );
 
+    // SIMPAN STATUS & WAKTU KE SHAREDPREFERENCES
+    final prefs = await SharedPreferences.getInstance();
+
+    // Catat Apakah User telah Login
+    await prefs.setBool('is_logged_in', true);
+
+    // Set waktu agar saat masuk dashboard waktu di set ke 0
+    await prefs.setInt('last_exit_time', DateTime.now().millisecondsSinceEpoch);
+
     Future.delayed(const Duration(milliseconds: 800), () {
-      Navigator.pop(context); 
+      Navigator.pop(context);
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(builder: (context) => const DashboardScreen()),
@@ -76,7 +89,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white, // Background utama tetap putih
-      
       // HEADER (Mirip desain Keypad nanti)
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -84,8 +96,18 @@ class _LoginScreenState extends State<LoginScreen> {
         toolbarHeight: 60,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            size: 20,
+            color: Colors.black,
+          ),
+          onPressed: () {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => const LandingPage()),
+              (route) => false,
+            );
+          },
         ),
         title: const Text(
           "Login",
@@ -115,7 +137,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Column(
         children: [
           const SizedBox(height: 40),
-          
+
           // INSTRUKSI
           const Text(
             "Input PIN",
@@ -142,23 +164,23 @@ class _LoginScreenState extends State<LoginScreen> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeInOut,
                 margin: const EdgeInsets.symmetric(horizontal: 10),
-                width: 16, 
+                width: 16,
                 height: 16,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: isFilled 
+                  gradient: isFilled
                       ? const LinearGradient(
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
-                          colors: [
-                            Color(0xFFFF5C5C), 
-                            Color(0xFFED1C24), 
-                          ],
+                          colors: [Color(0xFFFF5C5C), Color(0xFFED1C24)],
                         )
                       : null,
-                  border: isFilled 
-                      ? null 
-                      : Border.all(color: const Color.fromARGB(255, 212, 212, 212), width: 1.5),
+                  border: isFilled
+                      ? null
+                      : Border.all(
+                          color: const Color.fromARGB(255, 212, 212, 212),
+                          width: 1.5,
+                        ),
                 ),
               );
             }),
@@ -169,7 +191,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
           // --- FORGOT PIN (DILUAR BACKGROUND KEYPAD) ---
           Padding(
-            padding: const EdgeInsets.only(bottom: 30.0), // Jarak ke Keypad Panel
+            padding: const EdgeInsets.only(
+              bottom: 30.0,
+            ), // Jarak ke Keypad Panel
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -197,23 +221,26 @@ class _LoginScreenState extends State<LoginScreen> {
           // --- KEYPAD PANEL (BACKGROUND HEADER STYLE) ---
           Container(
             width: double.infinity, // Lebar penuh
-            padding: const EdgeInsets.only(top: 30, bottom: 40, left: 40, right: 40),
-            
+            padding: const EdgeInsets.only(
+              top: 30,
+              bottom: 40,
+              left: 40,
+              right: 40,
+            ),
+
             // DEKORASI MIRIP HEADER (Tapi shadow & border di atas)
             decoration: BoxDecoration(
               color: Colors.white, // Warna dasar panel
-
-              
               // Shadow mengarah ke ATAS (offset -4)
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.08),
                   blurRadius: 10,
-                  offset: const Offset(0, -1), 
+                  offset: const Offset(0, -1),
                 ),
               ],
             ),
-            
+
             child: Column(
               children: [
                 _buildKeypadRow(['1', '2', '3']),
@@ -225,7 +252,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const SizedBox(width: 60, height: 60), 
+                    const SizedBox(width: 60, height: 60),
                     _buildKeypadButton('0'),
                     SizedBox(
                       width: 60,
@@ -233,7 +260,11 @@ class _LoginScreenState extends State<LoginScreen> {
                       child: InkWell(
                         onTap: _onDeletePressed,
                         borderRadius: BorderRadius.circular(30),
-                        child: const Icon(Icons.backspace_outlined, size: 28, color: Colors.black54),
+                        child: const Icon(
+                          Icons.backspace_outlined,
+                          size: 28,
+                          color: Colors.black54,
+                        ),
                       ),
                     ),
                   ],

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // --- IMPORT SCREEN LAIN ---
 import 'history.dart';
 import 'scan_qris_screen.dart';
 import 'account_screen.dart';
 import 'inbox.dart';
-
+import 'login.dart';
 
 // --- IMPORT WIDGETS DASHBOARD ---
 import '../widgets/dashboard/header.dart';
@@ -23,7 +24,8 @@ class DashboardScreen extends StatefulWidget {
   State<DashboardScreen> createState() => _DashboardScreenState();
 }
 
-class _DashboardScreenState extends State<DashboardScreen> {
+class _DashboardScreenState extends State<DashboardScreen>
+    with WidgetsBindingObserver {
   int _currentIndex = 0;
 
   // Daftar Halaman untuk Navigasi
@@ -32,6 +34,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _pages = [
       const HomeContent(), // Index 0: Halaman Dashboard/Home
       const HistoryScreen(), // Index 1: Halaman History (Yang tadi dibuat)
@@ -40,10 +43,52 @@ class _DashboardScreenState extends State<DashboardScreen> {
     ];
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // Nangkep momen pas aplikasi diminimize/ditutup
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      _saveExitTime();
+    } 
+    else if (state == AppLifecycleState.resumed) {
+      _checkLockScreen();
+    }
+  }
+
+  Future<void> _saveExitTime() async {
+    final prefs = await SharedPreferences.getInstance();
+    int currentTime = DateTime.now().millisecondsSinceEpoch;
+    await prefs.setInt('last_exit_time', currentTime);
+  }
+
   void _onNavBarTap(int index) {
     setState(() {
       _currentIndex = index;
     });
+  }
+
+  Future<void> _checkLockScreen() async {
+    final prefs = await SharedPreferences.getInstance();
+    int lastExitTime = prefs.getInt('last_exit_time') ?? 0;
+    int currentTime = DateTime.now().millisecondsSinceEpoch;
+
+    int difference = currentTime - lastExitTime;
+
+    if (lastExitTime != 0 && difference >= 30000) {
+      if (!mounted) return; // Mencegah error kalau widget ga aktif
+
+      // Lempar ke halaman Login
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        (route) => false,
+      );
+    }
   }
 
   @override

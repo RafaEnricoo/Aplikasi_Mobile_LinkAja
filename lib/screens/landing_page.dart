@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:async';
 import 'login.dart'; // Pastikan file ini ada
 
@@ -142,21 +143,26 @@ class _LandingPageState extends State<LandingPage> {
                 onEnter: (_) => setState(() => _isHovering = true),
                 onExit: (_) => setState(() => _isHovering = false),
                 child: GestureDetector(
-                  onTap: () {
+                  onTap: () async{
                     // 1. Matikan timer saat mau pergi (sudah benar)
                     _timer?.cancel(); 
+
+                    final prefs = await SharedPreferences.getInstance();
+                    await prefs.setBool('is_first_time', false);
                     
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
-                    ).then((_) {
-                      // 2. TAMBAHAN BARU:
-                      // Bagian ini akan jalan otomatis saat user menekan Back dari LoginScreen
-                      // Kita nyalakan lagi scroll otomatisnya
-                      _startAutoScroll();
-                    });
+                   if (mounted) {
+                      // 3. Pakai 'push' biasa BUKAN pushReplacement, biar bisa di-back
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                      ).then((_) {
+                        // 4. Jalan otomatis saat user menekan Back dari LoginScreen
+                        // Nyalakan lagi scroll otomatisnya
+                        _startAutoScroll();
+                      });
+                    }
                   },
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 300),
