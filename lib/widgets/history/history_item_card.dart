@@ -25,7 +25,13 @@ class HistoryItemCard extends StatelessWidget {
     // Helper logika ukuran icon
     // Kalau judulnya 'Top Up', kecilin jadi 20. Selain itu 28.
     double getIconSize() {
-      return transaction.title == 'Top Up' ? 20.0 : 28.0;
+      if (transaction.title == 'Top Up') {
+        return 20.0;
+      } else if (transaction.title == 'Mobile Legends Purchase') {
+        return 48.0; 
+      } else {
+        return 28.0;
+      }
     }
 
     return Container(
