@@ -62,7 +62,7 @@ class _SplashScreenCheckState extends State<SplashScreenCheck> {
       );
     } else {
       if (isLoggedIn) {
-        if (lastExitTime != 0 && difference < 30000) {
+        if (lastExitTime != 0 && difference < 300000) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (context) => const DashboardScreen()),

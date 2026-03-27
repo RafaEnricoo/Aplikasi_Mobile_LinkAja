@@ -26,11 +26,11 @@ class _PromoSliderState extends State<PromoSlider> {
   Timer? _timer;
 
   final List<String> promoImages = [
-    'assets/images/dashboard/special_just_for_you/special1.PNG',
-    'assets/images/dashboard/special_just_for_you/special2.PNG',
-    'assets/images/dashboard/special_just_for_you/special3.PNG',
-    'assets/images/dashboard/special_just_for_you/special4.PNG',
-    'assets/images/dashboard/special_just_for_you/special5.PNG',
+    'assets/images/dashboard/special_just_for_you/special1.png',
+    'assets/images/dashboard/special_just_for_you/special2.png',
+    'assets/images/dashboard/special_just_for_you/special3.png',
+    'assets/images/dashboard/special_just_for_you/special4.png',
+    'assets/images/dashboard/special_just_for_you/special5.png',
   ];
   @override
   void initState() {

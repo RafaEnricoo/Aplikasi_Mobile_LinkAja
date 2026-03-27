@@ -79,7 +79,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
     int difference = currentTime - lastExitTime;
 
-    if (lastExitTime != 0 && difference >= 30000) {
+    if (lastExitTime != 0 && difference >= 300000) {
       if (!mounted) return; // Mencegah error kalau widget ga aktif
 
       // Lempar ke halaman Login
